@@ -7,8 +7,9 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "copy-vanilla": "node scripts/copy-vanilla.mjs",
+    "dev": "node scripts/copy-vanilla.mjs && vite",
+    "build": "node scripts/copy-vanilla.mjs && vite build",
     "build:check": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"

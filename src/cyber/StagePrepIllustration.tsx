@@ -1,6 +1,6 @@
 import type { StageIndex } from "../types/scene";
 
-/** Встроенные SVG — позже заменить на <img src="…" />. */
+/** Иллюстрации подготовки к этапу (векторные SVG). */
 export function StagePrepIllustration({ stage }: { stage: StageIndex }) {
   if (stage === 1) {
     return (
