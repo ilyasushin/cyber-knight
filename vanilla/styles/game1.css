@@ -1,0 +1,477 @@
+/**
+ * Стили мини-игры «Детектор лжи» — из game1.html.
+ * Корень: .game1-root (ставится на #game-container). Панель: .g1-screen (не .screen — иначе конфликт с роутером).
+ */
+.game1-root {
+  --yellow: #f0a500;
+  --yellow-soft: #fff3cc;
+  width: 100%;
+  min-height: 620px;
+  height: 100%;
+  font-family: "Inter", var(--ds-font-sans, system-ui, sans-serif);
+}
+
+.game1-root .g1-screen {
+  width: 100%;
+  min-height: 620px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.game1-root .hud {
+  background: var(--blue);
+  padding: 16px 18px 14px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.game1-root .hud-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.game1-root .hud-content {
+  position: relative;
+  z-index: 2;
+}
+
+.game1-root .hud-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.game1-root .hud-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.2px;
+}
+
+.game1-root .timer {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 59, 107, 0.9);
+  border-radius: 20px;
+  padding: 5px 11px;
+  transition: background 300ms ease;
+}
+
+.game1-root .timer.urgent {
+  background: var(--magenta);
+}
+
+.game1-root .timer-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  animation: g1-pulse 1s infinite;
+}
+
+@keyframes g1-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.game1-root .timer-text {
+  font-size: 13px;
+  font-weight: 900;
+  color: #fff;
+}
+
+.game1-root .progress-bar {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  height: 4px;
+  overflow: hidden;
+}
+
+.game1-root .progress-fill {
+  height: 4px;
+  border-radius: 4px;
+  background: var(--green);
+  width: 0%;
+  transition: width 400ms ease;
+}
+
+.game1-root .hud-sub {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.game1-root .hud-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.game1-root .flags-count {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.game1-root .chat {
+  flex: 1;
+  padding: 14px 14px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.game1-root .chat::-webkit-scrollbar {
+  width: 3px;
+}
+
+.game1-root .chat::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.game1-root .chat::-webkit-scrollbar-thumb {
+  background: rgba(26, 85, 227, 0.2);
+  border-radius: 2px;
+}
+
+.game1-root .caller-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(26, 85, 227, 0.1);
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+
+.game1-root .caller-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.game1-root .caller-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.game1-root .caller-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.game1-root .caller-badge {
+  margin-left: auto;
+  background: var(--yellow-soft);
+  color: #7a5a00;
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.game1-root .msg {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 350ms ease,
+    transform 350ms ease;
+}
+
+.game1-root .msg.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.game1-root .bubble {
+  border-radius: 16px;
+  padding: 10px 13px;
+  font-size: 12px;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: all 180ms ease;
+  position: relative;
+  max-width: 240px;
+  border: 1.5px solid transparent;
+  user-select: none;
+}
+
+.game1-root .bubble.caller {
+  background: var(--surface);
+  color: var(--text);
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+}
+
+.game1-root .bubble.caller:not(.done):hover {
+  border-color: rgba(255, 59, 107, 0.25);
+  background: #fff9fa;
+}
+
+.game1-root .bubble.flagged {
+  background: #ffdde8;
+  border-color: var(--magenta);
+  color: #c20048;
+  cursor: default;
+}
+
+.game1-root .bubble.safe-ok {
+  background: var(--green-soft);
+  border-color: var(--green);
+  color: #1a5200;
+  cursor: default;
+}
+
+.game1-root .bubble.wrong {
+  background: var(--yellow-soft);
+  border-color: var(--yellow);
+  color: #7a5a00;
+  cursor: default;
+  animation: g1-shake 0.35s ease;
+}
+
+.game1-root .bubble.done {
+  cursor: default;
+}
+
+.game1-root .bubble.system {
+  background: rgba(26, 85, 227, 0.08);
+  color: var(--blue);
+  font-size: 11px;
+  font-weight: 700;
+  align-self: center;
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  cursor: default;
+  max-width: 100%;
+  border: none;
+}
+
+@keyframes g1-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.game1-root .flag-badge,
+.game1-root .safe-badge,
+.game1-root .wrong-badge {
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  border: 2px solid var(--bg);
+}
+
+.game1-root .flag-badge {
+  background: var(--magenta);
+}
+
+.game1-root .safe-badge {
+  background: var(--green);
+}
+
+.game1-root .wrong-badge {
+  background: var(--yellow);
+}
+
+.game1-root .msg-time {
+  font-size: 9px;
+  color: #9ca3af;
+  padding: 0 4px;
+}
+
+.game1-root .hint {
+  background: var(--surface);
+  border-top: 1px solid rgba(26, 85, 227, 0.08);
+  padding: 10px 14px;
+  flex-shrink: 0;
+}
+
+.game1-root .hint-text {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.game1-root .hint-text span {
+  color: var(--magenta);
+  font-weight: 700;
+}
+
+.game1-root .tooltip {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 60px;
+  background: var(--text);
+  border-radius: var(--radius-md);
+  padding: 13px 14px;
+  z-index: 20;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  transform: translateY(8px);
+  opacity: 0;
+  transition: all 220ms ease;
+  pointer-events: none;
+}
+
+.game1-root .tooltip.show {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.game1-root .tooltip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.game1-root .tooltip-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+}
+
+.game1-root .tooltip-tag.wrong {
+  color: var(--yellow);
+}
+
+.game1-root .tooltip-tag.correct {
+  color: var(--green);
+}
+
+.game1-root .tooltip-close {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+.game1-root .tooltip-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.game1-root .tooltip-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.game1-root .tooltip-body {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.45;
+}
+
+.game1-root .end-screen {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: var(--dark);
+  z-index: 30;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.game1-root .end-screen.show {
+  display: flex;
+}
+
+.game1-root .end-score {
+  font-size: 52px;
+  font-weight: 900;
+  color: var(--green);
+  letter-spacing: -2px;
+  margin-bottom: 4px;
+}
+
+.game1-root .end-label {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 24px;
+}
+
+.game1-root .end-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.game1-root .end-sub {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+  margin-bottom: 32px;
+}
+
+.game1-root .btn-end {
+  background: var(--green);
+  color: #1a4a00;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  width: 100%;
+  max-width: 260px;
+  cursor: pointer;
+  font-family: inherit;
+}

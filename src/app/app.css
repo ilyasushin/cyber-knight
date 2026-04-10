@@ -1,0 +1,254 @@
+/* Компоненты приложения — только var(--ds-*). См. design-system.md */
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: linear-gradient(
+    165deg,
+    var(--ds-color-page-0) 0%,
+    var(--ds-color-page-1) 45%,
+    var(--ds-color-page-2) 100%
+  );
+}
+
+.shell__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-3) var(--ds-space-4);
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--ds-color-border-subtle);
+  background: var(--ds-color-surface-glass);
+  backdrop-filter: blur(8px);
+}
+
+.shell__progress {
+  font-size: var(--ds-text-caption);
+  font-weight: var(--ds-font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ds-color-text);
+}
+
+.shell__progress--muted {
+  font-weight: var(--ds-font-weight-medium);
+  color: var(--ds-color-text-muted);
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.shell__sound {
+  font-size: 1.1rem;
+  line-height: 1;
+  min-width: var(--ds-tap-min);
+  min-height: var(--ds-tap-min);
+  padding: var(--ds-space-2);
+  border: none;
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-color-ghost-hover);
+  cursor: pointer;
+  color: var(--ds-color-text);
+}
+
+.shell__sound:hover {
+  background: var(--ds-color-accent-subtle);
+}
+
+.shell__main {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.shell__cyber-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--ds-space-4) 0;
+}
+
+.screen {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-4);
+  padding: var(--ds-space-6);
+  text-align: center;
+  max-width: var(--ds-screen-max);
+  margin: 0 auto;
+  width: 100%;
+}
+
+.screen--game {
+  max-width: min(100%, var(--ds-screen-game-max));
+}
+
+.screen__eyebrow {
+  margin: 0;
+  font-size: var(--ds-text-eyebrow);
+  font-weight: var(--ds-font-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ds-color-text-muted);
+}
+
+.screen__title {
+  margin: 0;
+  font-size: var(--ds-text-title);
+  font-weight: var(--ds-font-weight-bold);
+  line-height: var(--ds-line-tight);
+  color: var(--ds-color-text);
+}
+
+.screen__lead {
+  margin: 0;
+  color: var(--ds-color-text-secondary);
+  font-size: var(--ds-text-lead);
+  line-height: var(--ds-line-normal);
+}
+
+.screen__list {
+  margin: 0;
+  padding-left: var(--ds-space-5);
+  text-align: left;
+  color: var(--ds-color-text-secondary);
+  font-size: var(--ds-text-body);
+  line-height: var(--ds-line-normal);
+}
+
+.screen__list li + li {
+  margin-top: var(--ds-space-2);
+}
+
+/* Переход между этапами: слот под анимацию доспеха */
+.reward-visual {
+  width: 100%;
+  max-width: 16rem;
+  height: var(--ds-reward-visual-height);
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-color-accent-subtle);
+  border: 1px solid var(--ds-color-border-subtle);
+  box-shadow: var(--ds-shadow-md);
+  flex-shrink: 0;
+}
+
+.btn {
+  font: inherit;
+  cursor: pointer;
+  border: none;
+  border-radius: var(--ds-radius-pill);
+  padding: var(--ds-space-3) var(--ds-space-5);
+  min-height: var(--ds-tap-min);
+  margin-top: var(--ds-space-2);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-2);
+}
+
+.btn--primary {
+  background: var(--ds-color-accent);
+  color: var(--ds-color-on-accent);
+}
+
+.btn--primary:hover {
+  background: var(--ds-color-accent-hover);
+}
+
+.btn--secondary {
+  background: var(--ds-color-accent-subtle);
+  color: var(--ds-color-accent);
+}
+
+.btn--secondary:hover {
+  background: rgb(37 99 235 / 18%);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--ds-color-text-muted);
+}
+
+.btn--ghost:hover {
+  background: var(--ds-color-ghost-hover);
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ds-space-4);
+  background: var(--ds-color-scrim);
+}
+
+.overlay__panel {
+  width: min(100%, var(--ds-modal-max-w));
+  background: var(--ds-color-surface);
+  border-radius: var(--ds-radius-lg);
+  padding: var(--ds-space-5) var(--ds-space-6);
+  box-shadow: var(--ds-shadow-lg);
+}
+
+.overlay__title {
+  margin: 0 0 var(--ds-space-2);
+  font-size: var(--ds-text-modal-title);
+  font-weight: var(--ds-font-weight-bold);
+  line-height: var(--ds-line-tight);
+  color: var(--ds-color-text);
+}
+
+.overlay__text {
+  margin: 0 0 var(--ds-space-4);
+  color: var(--ds-color-text-secondary);
+  font-size: var(--ds-text-body);
+  line-height: var(--ds-line-normal);
+}
+
+/* Онбординг: 1–2 карточки с визуалом */
+.onboarding-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-4);
+  margin-bottom: var(--ds-space-4);
+}
+
+.onboarding-card {
+  text-align: left;
+  background: var(--ds-color-surface);
+  border: 1px solid var(--ds-color-border-subtle);
+  border-radius: var(--ds-radius-md);
+  padding: var(--ds-space-4);
+  box-shadow: var(--ds-shadow-md);
+}
+
+.onboarding-card__visual {
+  height: 6.5rem;
+  border-radius: var(--ds-radius-sm);
+  background: var(--ds-color-accent-subtle);
+  margin-bottom: var(--ds-space-3);
+  border: 1px dashed rgb(37 99 235 / 35%);
+}
+
+.onboarding-card__text {
+  margin: 0;
+  font-size: var(--ds-text-body);
+  color: var(--ds-color-text-secondary);
+  line-height: var(--ds-line-normal);
+}
