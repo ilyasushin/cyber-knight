@@ -405,7 +405,7 @@
         gameState.totalScore += score;
         showScreen('stage-result');
       -->
-      <button class="btn-end" onclick="alert('→ вызов onComplete(score) в app.js')">Далее →</button>
+      <button type="button" class="btn-end" id="game1DemoNext">Далее →</button>
     </div>
 
   </div>
@@ -641,6 +641,10 @@
 
   /* ─── START ─── */
   setTimeout(revealNext, 700);
+
+  document.getElementById('game1DemoNext')?.addEventListener('click', function () {
+    console.info('[Демо game1.html] В приложении vanilla вызывается onComplete(очки) из app.js');
+  });
 </script>
 
 </body>

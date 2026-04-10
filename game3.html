@@ -334,7 +334,7 @@
         gameState.totalScore += score;
         showScreen('stage-result');
       -->
-      <button class="btn-end" onclick="alert('→ onComplete(score) в app.js')">Далее →</button>
+      <button type="button" class="btn-end" id="game3DemoNext">Далее →</button>
     </div>
 
   </div>
@@ -480,6 +480,10 @@
 
   /* ─── INIT ─── */
   buildGrid();
+
+  document.getElementById('game3DemoNext')?.addEventListener('click', function () {
+    console.info('[Демо game3.html] В приложении vanilla вызывается onComplete(очки) из app.js');
+  });
 </script>
 
 </body>

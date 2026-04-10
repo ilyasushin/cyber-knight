@@ -11,6 +11,9 @@ const gameState = {
 /** @type {number | null} */
 let lastRoundScore = null;
 
+/** Текущая мини-игра (Game1…Game4) — выставляется перед init/start. */
+let currentGame = null;
+
 function showScreen(id) {
   document.querySelectorAll(".phone .screen").forEach((el) => {
     el.classList.toggle("active", el.getAttribute("data-screen") === id);
@@ -112,6 +115,10 @@ function syncFinalScreen() {
   }
 }
 
+/**
+ * Колбэк завершения раунда: onComplete(score [, errors]) — score в gameState.totalScore,
+ * экран награды: data-screen="stage-result" (после 4-го этапа кнопка ведёт на final).
+ */
 function beginStageFromIntro() {
   const stage = gameState.currentStage;
   if (stage < 1 || stage > 4) return;
@@ -124,6 +131,11 @@ function beginStageFromIntro() {
   Game2.destroy();
   Game3.destroy();
   Game4.destroy();
+  currentGame = null;
+
+  const games = [null, Game1, Game2, Game3, Game4];
+  currentGame = games[stage];
+  if (!currentGame) return;
 
   const onRoundComplete = (score, roundErrors = 0) => {
     lastRoundScore = score;
@@ -135,26 +147,8 @@ function beginStageFromIntro() {
     syncResultScreen();
   };
 
-  if (stage === 2) {
-    Game2.init(mount);
-    Game2.start({ onComplete: onRoundComplete });
-    return;
-  }
-
-  if (stage === 3) {
-    Game3.init(mount);
-    Game3.start({ onComplete: onRoundComplete });
-    return;
-  }
-
-  if (stage === 4) {
-    Game4.init(mount);
-    Game4.start({ onComplete: onRoundComplete });
-    return;
-  }
-
-  Game1.init(mount);
-  Game1.start({ onComplete: onRoundComplete });
+  currentGame.init(mount);
+  currentGame.start({ onComplete: onRoundComplete });
 }
 
 function onResultNext() {
@@ -165,6 +159,7 @@ function onResultNext() {
     Game2.destroy();
     Game3.destroy();
     Game4.destroy();
+    currentGame = null;
     showScreen("stage-intro");
     syncStageIntro(gameState.currentStage);
     return;
@@ -174,6 +169,7 @@ function onResultNext() {
   Game2.destroy();
   Game3.destroy();
   Game4.destroy();
+  currentGame = null;
   syncFinalScreen();
   showScreen("final");
 }
