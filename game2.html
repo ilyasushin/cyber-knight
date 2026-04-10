@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кибер.Рыцарь — Этап 2: Найди подделку</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue:       #1A55E3;
+      --blue-soft:  #E5EDFF;
+      --green:      #6EE04A;
+      --magenta:    #FF3B6B;
+      --dark:       #0a0a1e;
+      --text:       #0D1B4B;
+      --text-muted: #6B7280;
+      --bg:         #F0F4FF;
+      --surface:    #FFFFFF;
+      --radius-md:  14px;
+      --radius-lg:  20px;
+      --transition: 220ms ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #1a1a2e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .phone {
+      width: 320px;
+      border-radius: 44px;
+      border: 8px solid #0d0d1a;
+      overflow: hidden;
+      background: #0d0d1a;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+    }
+
+    .screen {
+      width: 100%;
+      height: 660px;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ─── HUD ─── */
+    .hud {
+      background: var(--blue);
+      padding: 16px 18px 13px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .hud-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .hud-c  { position: relative; z-index: 2; }
+    .hud-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .hud-title { font-size: 13px; font-weight: 900; color: #fff; }
+    .round-pill {
+      background: rgba(255,255,255,.18);
+      color: #fff;
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .progress-bar { background: rgba(255,255,255,.2); border-radius: 4px; height: 4px; overflow: hidden; }
+    .progress-fill {
+      height: 4px; border-radius: 4px;
+      background: var(--green);
+      width: 0%;
+      transition: width 500ms ease;
+    }
+    .hud-sub {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+    .hud-label  { font-size: 10px; color: rgba(255,255,255,.55); font-weight: 700; letter-spacing: .06em; }
+    .score-disp { font-size: 10px; font-weight: 700; color: var(--green); }
+
+    /* ─── INSTRUCTION ─── */
+    .instruction {
+      background: var(--surface);
+      border-bottom: 1px solid rgba(26,85,227,.08);
+      padding: 9px 16px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .instruction-text { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+    .instruction-text b { color: var(--text); }
+
+    /* ─── CARD ARENA ─── */
+    .arena {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 14px;
+    }
+
+    .card-stack { position: relative; width: 250px; height: 320px; }
+
+    .site-card {
+      position: absolute;
+      inset: 0;
+      background: var(--surface);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,.13);
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+    }
+    .site-card:active { cursor: grabbing; }
+    .site-card.back {
+      transform: scale(0.94) translateY(10px);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .site-card.front { z-index: 2; }
+
+    /* swipe labels */
+    .choice-label {
+      position: absolute;
+      top: 14px;
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .06em;
+      opacity: 0;
+      transition: opacity 120ms;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .label-real { left: 12px;  background: var(--green);   color: #1a4a00; }
+    .label-fake { right: 12px; background: var(--magenta); color: #fff; }
+
+    /* ─── BROWSER MOCKUP ─── */
+    .card-browser { display: flex; flex-direction: column; height: 100%; }
+    .card-bar {
+      background: #f5f5f5;
+      padding: 6px 8px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      border-bottom: 1px solid #e8e8e8;
+      flex-shrink: 0;
+    }
+    .card-lock { width: 10px; height: 10px; flex-shrink: 0; }
+    .card-url {
+      flex: 1;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 3px 7px;
+      font-size: 9px;
+      font-family: monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-url.bad { border-color: var(--magenta); background: #fff5f7; color: #c20048; }
+
+    .card-site { flex: 1; overflow: hidden; }
+    .card-site-header {
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--blue);
+    }
+    .card-logo { font-size: 12px; font-weight: 900; color: #fff; }
+    .card-logo.fake { color: #ffe0e0; }
+    .card-nav { display: flex; gap: 6px; }
+    .card-nav span { font-size: 8px; color: rgba(255,255,255,.75); }
+
+    .card-hero {
+      padding: 10px;
+      background: linear-gradient(135deg, #1A55E3, #2563eb);
+    }
+    .card-hero-title { font-size: 11px; font-weight: 900; color: #fff; margin-bottom: 3px; }
+    .card-hero-sub   { font-size: 9px; color: rgba(255,255,255,.7); margin-bottom: 8px; }
+    .card-cta {
+      display: inline-block;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 9px;
+      font-weight: 700;
+    }
+    .card-cta.ok     { background: var(--green);   color: #1a4a00; }
+    .card-cta.bad    { background: var(--magenta); color: #fff; }
+
+    .card-body { padding: 8px 10px; background: var(--bg); }
+    .card-body-row {
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 8px;
+      margin-bottom: 6px;
+    }
+    .card-body-title { font-size: 9px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .card-body-text  { font-size: 8px; color: var(--text-muted); line-height: 1.4; }
+
+    .card-fake-field {
+      background: var(--surface);
+      border: 1.5px solid var(--magenta);
+      border-radius: 6px;
+      padding: 5px 8px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .card-fake-label { font-size: 8px; font-weight: 700; color: var(--magenta); }
+    .card-fake-input { font-size: 8px; color: var(--text-muted); flex: 1; }
+
+    /* ─── SWIPE BUTTONS ─── */
+    .swipe-btns {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      padding: 10px 14px 18px;
+      flex-shrink: 0;
+    }
+    .btn-wrap { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+    .swipe-btn {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 14px rgba(0,0,0,.15);
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+    .swipe-btn:active { transform: scale(0.9); box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+    .btn-real { background: var(--green); }
+    .btn-fake { background: var(--magenta); }
+    .swipe-label { font-size: 9px; font-weight: 700; color: var(--text-muted); }
+
+    /* ─── RESULT OVERLAY ─── */
+    .result-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 30;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 250ms;
+    }
+    .result-overlay.show   { opacity: 1; pointer-events: auto; }
+    .result-overlay.correct { background: rgba(110,224,74,.1); }
+    .result-overlay.wrong   { background: rgba(255,59,107,.08); }
+
+    .result-card {
+      background: var(--text);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0,0,0,.3);
+    }
+    .result-tag {
+      font-size: 10px; font-weight: 700;
+      letter-spacing: .08em;
+      margin-bottom: 8px;
+    }
+    .result-tag.correct { color: var(--green); }
+    .result-tag.wrong   { color: var(--magenta); }
+    .result-title { font-size: 14px; font-weight: 900; color: #fff; margin-bottom: 6px; line-height: 1.3; }
+    .result-body  { font-size: 11px; color: rgba(255,255,255,.6); line-height: 1.5; margin-bottom: 14px; }
+
+    .result-diff {
+      background: rgba(255,255,255,.07);
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 14px;
+    }
+    .result-diff-label {
+      font-size: 9px; font-weight: 700;
+      color: rgba(255,255,255,.35);
+      letter-spacing: .06em;
+      margin-bottom: 4px;
+    }
+    .result-diff-text { font-size: 10px; color: rgba(255,255,255,.8); font-family: monospace; line-height: 1.4; }
+
+    .btn-next {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 13px;
+      font-size: 13px;
+      font-weight: 700;
+      width: 100%;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity var(--transition);
+    }
+    .btn-next:active { opacity: 0.85; }
+
+    /* ─── END SCREEN ─── */
+    .end-screen {
+      position: absolute;
+      inset: 0;
+      background: var(--dark);
+      z-index: 40;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      text-align: center;
+    }
+    .end-screen.show { display: flex; }
+    .end-score { font-size: 56px; font-weight: 900; color: var(--green); letter-spacing: -2px; margin-bottom: 4px; }
+    .end-label { font-size: 12px; color: rgba(255,255,255,.4); margin-bottom: 24px; }
+    .end-title { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+    .end-sub   { font-size: 12px; color: rgba(255,255,255,.5); line-height: 1.5; margin-bottom: 28px; }
+    .btn-end {
+      background: var(--green);
+      color: #1a4a00;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      font-size: 15px;
+      font-weight: 700;
+      width: 100%;
+      cursor: pointer;
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="screen" id="gs">
+
+    <!-- HUD -->
+    <div class="hud">
+      <svg class="hud-bg" viewBox="0 0 320 80" fill="none" preserveAspectRatio="xMidYMid slice">
+        <line x1="0" y1="28" x2="320" y2="28" stroke="#fff" stroke-width=".4" opacity=".08" stroke-dasharray="3 5"/>
+        <line x1="0" y1="65" x2="320" y2="65" stroke="#6EE04A" stroke-width=".4" opacity=".12" stroke-dasharray="3 5"/>
+        <polygon points="270,5 292,5 292,24 270,24" stroke="#6EE04A" stroke-width="1" fill="none" opacity=".25"/>
+      </svg>
+      <div class="hud-c">
+        <div class="hud-row">
+          <div class="hud-title">🔍 Найди подделку</div>
+          <div class="round-pill" id="roundPill">Раунд 1 / 5</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="hud-sub">
+          <div class="hud-label">ЭТАП 2 / 4</div>
+          <div class="score-disp" id="scoreDisp">★ 0 очков</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Instruction -->
+    <div class="instruction">
+      <div class="instruction-text">Какой сайт <b>поддельный?</b> Свайпни влево 🚩 или нажми кнопку</div>
+    </div>
+
+    <!-- Arena -->
+    <div class="arena">
+      <div class="card-stack" id="cardStack"></div>
+    </div>
+
+    <!-- Swipe buttons -->
+    <div class="swipe-btns">
+      <div class="btn-wrap">
+        <button class="swipe-btn btn-fake" onclick="choose('fake')">🚩</button>
+        <div class="swipe-label">Подделка</div>
+      </div>
+      <div class="btn-wrap">
+        <button class="swipe-btn btn-real" onclick="choose('real')">✓</button>
+        <div class="swipe-label">Настоящий</div>
+      </div>
+    </div>
+
+    <!-- Result overlay -->
+    <div class="result-overlay" id="resultOverlay">
+      <div class="result-card">
+        <div class="result-tag" id="resultTag"></div>
+        <div class="result-title" id="resultTitle"></div>
+        <div class="result-body" id="resultBody"></div>
+        <div class="result-diff">
+          <div class="result-diff-label">КЛЮЧЕВОЕ ОТЛИЧИЕ</div>
+          <div class="result-diff-text" id="resultDiff"></div>
+        </div>
+        <button class="btn-next" id="btnNext" onclick="nextRound()">Следующий →</button>
+      </div>
+    </div>
+
+    <!-- End screen -->
+    <div class="end-screen" id="endScreen">
+      <div class="end-score" id="endScore">+0</div>
+      <div class="end-label">очков заработано</div>
+      <div class="end-title" id="endTitle"></div>
+      <div class="end-sub" id="endSub"></div>
+      <!--
+        В реальном приложении:
+        gameState.totalScore += score;
+        showScreen('stage-result');
+      -->
+      <button class="btn-end" onclick="alert('→ onComplete(score) в app.js')">Далее →</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  /* ─────────────────────────────────────
+     ДАННЫЕ РАУНДОВ
+  ───────────────────────────────────── */
+  const rounds = [
+    {
+      question:     "Страница входа в Ozon Банк",
+      fakeKey:      "озон-банк.ru",
+      realKey:      "ozon.ru/bank",
+      fakeLock:     false,
+      explanation:  "«озон-банк.ru» написан кириллицей — это не официальный сайт Ozon.",
+      correctTitle: "Верно! Домен на кириллице — фишинг",
+      correctBody:  "«Озон-банк.ru» написан кириллицей. Официальный домен — только ozon.ru. Всегда проверяй адресную строку.",
+      wrongTitle:   "Ошибка — настоящий сайт безопасен",
+      wrongBody:    "ozon.ru — официальный домен. Поддельным был «озон-банк.ru» с кириллицей в адресе.",
+      fakeExtra:    'cvv',
+    },
+    {
+      question:     "Страница пополнения карты",
+      fakeKey:      "ozon-pay.ru/card",
+      realKey:      "ozon.ru/pay",
+      fakeLock:     true,
+      explanation:  "«ozon-pay.ru» — не официальный домен. Любой сайт с «ozon» через дефис — фишинг.",
+      correctTitle: "Верно! «ozon-pay.ru» — не Ozon",
+      correctBody:  "Мошенники добавляют слова к бренду через дефис: ozon-pay, ozon-bank, ozon-safe. Официальный сайт — только ozon.ru.",
+      wrongTitle:   "Ошибка — ozon.ru безопасен",
+      wrongBody:    "Поддельным был «ozon-pay.ru». Любой домен с дефисом после «ozon» — не официальный сайт.",
+      fakeExtra:    'btn',
+    },
+    {
+      question:     "Страница акции «Кешбэк 50%»",
+      fakeKey:      "0zon.ru/promo",
+      realKey:      "ozon.ru/promo",
+      fakeLock:     true,
+      explanation:  "В «0zon.ru» — цифра 0 вместо буквы O. Визуально почти незаметно.",
+      correctTitle: "Верно! Ноль вместо буквы «O»",
+      correctBody:  "«0zon.ru» содержит цифру 0 вместо буквы O. Такие замены сложно заметить — всегда читай домен по буквам.",
+      wrongTitle:   "Ошибка — это был ozon.ru",
+      wrongBody:    "Фейком был «0zon.ru» с нулём вместо O. Визуально похоже, но это другой сайт.",
+      fakeExtra:    'phone',
+    },
+    {
+      question:     "Форма восстановления пароля",
+      fakeKey:      "ozon.account-restore.ru",
+      realKey:      "ozon.ru/restore",
+      fakeLock:     false,
+      explanation:  "Главный домен — «account-restore.ru». «ozon» здесь лишь поддомен чужого сайта.",
+      correctTitle: "Верно! Ozon — поддомен, не сайт",
+      correctBody:  "В «ozon.account-restore.ru» настоящий домен — account-restore.ru. Ozon стоит слева от точки — это поддомен чужого сайта.",
+      wrongTitle:   "Ошибка — читай домен справа налево",
+      wrongBody:    "Фейком был «ozon.account-restore.ru». Главный домен — всегда правее последней точки. Здесь это account-restore.ru.",
+      fakeExtra:    'cvv',
+    },
+    {
+      question:     "Страница службы поддержки",
+      fakeKey:      "ozon.ru.support-chat.com",
+      realKey:      "ozon.ru/support",
+      fakeLock:     true,
+      explanation:  "Главный домен — «support-chat.com». «ozon.ru» здесь лишь часть пути, а не домен.",
+      correctTitle: "Верно! Главный домен — support-chat.com",
+      correctBody:  "Мошенники вставляют «ozon.ru» в начало чужого домена. Читай адрес справа: .com — значит главный домен не Ozon.",
+      wrongTitle:   "Ошибка — ozon.ru/support безопасен",
+      wrongBody:    "Поддельным был «ozon.ru.support-chat.com». Главный домен — support-chat.com, а не ozon.ru.",
+      fakeExtra:    'btn',
+    },
+  ];
+
+  /* ─── STATE ─── */
+  let currentRound = 0;
+  let score        = 0;
+  let errors       = 0;
+  let answered     = false;
+
+  /* ─── HELPERS ─── */
+  function makeLock(ok) {
+    const color = ok ? '#22c55e' : '#d1d5db';
+    return `<svg class="card-lock" viewBox="0 0 10 10" fill="none">
+      <rect x="1" y="4" width="8" height="6" rx="1.5" fill="${color}"/>
+      <rect x="3" y="1.5" width="4" height="4" rx="2" stroke="${color}" stroke-width="1.5" fill="none"/>
+    </svg>`;
+  }
+
+  function makeCardHTML(url, isReal, r) {
+    const lock     = isReal ? makeLock(true) : makeLock(r.fakeLock);
+    const urlClass = isReal ? '' : 'bad';
+    const logoText = (isReal || r.fakeExtra === 'phone') ? 'ozon банк' : '0zon банк';
+    const logoClass = isReal ? '' : 'fake';
+    const ctaText  = isReal ? 'Перейти' : (r.fakeExtra === 'btn' ? 'Подтвердить данные' : 'Перейти');
+    const ctaClass = (isReal || r.fakeExtra !== 'btn') ? 'ok' : 'bad';
+
+    const extraCVV = !isReal && r.fakeExtra === 'cvv'
+      ? `<div class="card-fake-field"><div class="card-fake-label">CVV карты:</div><div class="card-fake-input">···</div></div>` : '';
+    const extraPhone = !isReal && r.fakeExtra === 'phone'
+      ? `<div class="card-fake-field"><div class="card-fake-label">Телефон:</div><div class="card-fake-input">+7 ···</div></div>` : '';
+
+    return `
+      <div class="card-browser">
+        <div class="card-bar">
+          ${lock}
+          <div class="card-url ${urlClass}">${url}</div>
+        </div>
+        <div class="card-site">
+          <div class="card-site-header">
+            <div class="card-logo ${logoClass}">${logoText}</div>
+            <div class="card-nav"><span>Карты</span><span>Войти</span></div>
+          </div>
+          <div class="card-hero">
+            <div class="card-hero-title">${r.question}</div>
+            <div class="card-hero-sub">Ozon Банк — надёжно и удобно</div>
+            <div class="card-cta ${ctaClass}">${ctaText}</div>
+          </div>
+          <div class="card-body">
+            ${extraCVV}${extraPhone}
+            <div class="card-body-row">
+              <div class="card-body-title">${isReal ? 'Безопасное соединение' : 'Введите данные для продолжения'}</div>
+              <div class="card-body-text">${isReal ? 'Ваши данные защищены шифрованием.' : 'Для подтверждения личности заполните форму.'}</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  /* ─── BUILD ROUND ─── */
+  function buildRound(idx) {
+    const r     = rounds[idx];
+    const stack = document.getElementById('cardStack');
+    stack.innerHTML = '';
+
+    const fakeIsLeft = Math.random() > 0.5;
+
+    /* back card */
+    const back = document.createElement('div');
+    back.className = 'site-card back';
+    back.innerHTML = makeCardHTML(fakeIsLeft ? r.realKey : r.fakeKey, fakeIsLeft, r);
+    stack.appendChild(back);
+
+    /* front card */
+    const front = document.createElement('div');
+    front.className = 'site-card front';
+    front.dataset.isFake = fakeIsLeft ? 'true' : 'false';
+    front.innerHTML = `
+      <div class="choice-label label-real">✓ Настоящий</div>
+      <div class="choice-label label-fake">🚩 Подделка</div>
+      ${makeCardHTML(fakeIsLeft ? r.fakeKey : r.realKey, !fakeIsLeft, r)}`;
+    stack.appendChild(front);
+
+    setupDrag(front);
+    answered = false;
+
+    /* update HUD */
+    document.getElementById('roundPill').textContent   = 'Раунд ' + (idx + 1) + ' / ' + rounds.length;
+    document.getElementById('progressFill').style.width = (idx / rounds.length * 100) + '%';
+  }
+
+  /* ─── DRAG ─── */
+  function setupDrag(card) {
+    let startX = 0, curX = 0, dragging = false;
+
+    const getX = e => e.touches ? e.touches[0].clientX : e.clientX;
+
+    function onStart(e) {
+      dragging = true;
+      startX   = getX(e);
+      card.style.transition = 'none';
+    }
+    function onMove(e) {
+      if (!dragging) return;
+      curX = getX(e) - startX;
+      const rot = curX * 0.12;
+      card.style.transform = `translateX(${curX}px) rotate(${rot}deg)`;
+      const pct = Math.min(Math.abs(curX) / 80, 1);
+      card.querySelector('.label-real').style.opacity = curX >  20 ? pct : 0;
+      card.querySelector('.label-fake').style.opacity = curX < -20 ? pct : 0;
+      e.preventDefault();
+    }
+    function onEnd() {
+      if (!dragging) return;
+      dragging = false;
+      card.style.transition = 'transform 300ms ease';
+      if      (curX >  70) { animateOut(card, 'right'); choose('real'); }
+      else if (curX < -70) { animateOut(card, 'left');  choose('fake'); }
+      else {
+        card.style.transform = '';
+        card.querySelector('.label-real').style.opacity = 0;
+        card.querySelector('.label-fake').style.opacity = 0;
+      }
+      curX = 0;
+    }
+
+    card.addEventListener('mousedown',  onStart);
+    card.addEventListener('mousemove',  onMove);
+    card.addEventListener('mouseup',    onEnd);
+    card.addEventListener('mouseleave', onEnd);
+    card.addEventListener('touchstart', onStart, { passive: true });
+    card.addEventListener('touchmove',  onMove,  { passive: false });
+    card.addEventListener('touchend',   onEnd);
+  }
+
+  function animateOut(card, dir) {
+    card.style.transition = 'transform 350ms ease, opacity 350ms ease';
+    card.style.transform  = `translateX(${dir === 'right' ? 360 : -360}px) rotate(${dir === 'right' ? 22 : -22}deg)`;
+    card.style.opacity    = '0';
+  }
+
+  /* ─── CHOICE ─── */
+  function choose(choice) {
+    if (answered) return;
+    answered = true;
+
+    const r          = rounds[currentRound];
+    const front      = document.querySelector('.site-card.front');
+    const frontIsFake = front.dataset.isFake === 'true';
+    const correct    = (choice === 'fake' && frontIsFake) || (choice === 'real' && !frontIsFake);
+
+    if (front.style.transform === '' || front.style.transform === 'none') {
+      animateOut(front, choice === 'fake' ? 'left' : 'right');
+    }
+
+    if (correct) {
+      score += 150;
+    } else {
+      errors++;
+      score = Math.max(0, score - 30);
+    }
+
+    document.getElementById('scoreDisp').textContent = '★ ' + score + ' очков';
+    setTimeout(() => showResult(correct, r), 380);
+  }
+
+  /* ─── RESULT ─── */
+  function showResult(correct, r) {
+    const ov = document.getElementById('resultOverlay');
+    ov.className = 'result-overlay show ' + (correct ? 'correct' : 'wrong');
+
+    const tag = document.getElementById('resultTag');
+    tag.textContent = correct ? '✓ ВЕРНО' : '✗ ОШИБКА';
+    tag.className   = 'result-tag ' + (correct ? 'correct' : 'wrong');
+
+    document.getElementById('resultTitle').textContent = correct ? r.correctTitle : r.wrongTitle;
+    document.getElementById('resultBody').textContent  = correct ? r.correctBody  : r.wrongBody;
+    document.getElementById('resultDiff').textContent  = r.explanation;
+
+    const isLast = currentRound >= rounds.length - 1;
+    document.getElementById('btnNext').textContent = isLast ? 'Завершить →' : 'Следующий →';
+  }
+
+  /* ─── NEXT ROUND ─── */
+  function nextRound() {
+    document.getElementById('resultOverlay').className = 'result-overlay';
+    currentRound++;
+    if (currentRound >= rounds.length) { endGame(); return; }
+    buildRound(currentRound);
+  }
+
+  /* ─── END GAME ─── */
+  function endGame() {
+    document.getElementById('progressFill').style.width = '100%';
+    const es = document.getElementById('endScreen');
+    document.getElementById('endScore').textContent = '+' + score;
+
+    if (errors === 0) {
+      document.getElementById('endTitle').textContent = '🔒 Броня получена! Идеально!';
+      document.getElementById('endSub').textContent   = 'Ты распознал все поддельные сайты без единой ошибки. Главное правило — читай домен справа налево.';
+    } else {
+      document.getElementById('endTitle').textContent = '🔒 Броня «Пароль для покупок» получена';
+      document.getElementById('endSub').textContent   = 'Ошибок: ' + errors + '. Запомни: официальный сайт — только ozon.ru. Всё остальное — проверяй.';
+    }
+
+    es.classList.add('show');
+  }
+
+  /* ─── INIT ─── */
+  buildRound(0);
+</script>
+
+</body>
+</html>

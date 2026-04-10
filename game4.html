@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кибер.Рыцарь — Этап 4: Красная кнопка</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue:       #1A55E3;
+      --blue-soft:  #E5EDFF;
+      --green:      #6EE04A;
+      --magenta:    #FF3B6B;
+      --dark:       #0a0a1e;
+      --text:       #0D1B4B;
+      --text-muted: #6B7280;
+      --bg:         #F0F4FF;
+      --surface:    #FFFFFF;
+      --radius-md:  14px;
+      --radius-lg:  20px;
+      --transition: 220ms ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #1a1a2e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .phone {
+      width: 320px;
+      border-radius: 44px;
+      border: 8px solid #0d0d1a;
+      overflow: hidden;
+      background: #0d0d1a;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+    }
+
+    .screen {
+      width: 100%;
+      height: 660px;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ─── HUD ─── */
+    .hud {
+      background: var(--blue);
+      padding: 16px 18px 13px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .hud-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .hud-c  { position: relative; z-index: 2; }
+    .hud-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .hud-title { font-size: 13px; font-weight: 900; color: #fff; }
+    .progress-pill {
+      background: rgba(255,255,255,.18);
+      color: #fff;
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .progress-bar { background: rgba(255,255,255,.2); border-radius: 4px; height: 4px; overflow: hidden; }
+    .progress-fill {
+      height: 4px; border-radius: 4px;
+      background: var(--green);
+      width: 0%;
+      transition: width 400ms ease;
+    }
+    .hud-sub {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+    .hud-label  { font-size: 10px; color: rgba(255,255,255,.55); font-weight: 700; letter-spacing: .06em; }
+    .score-disp { font-size: 10px; font-weight: 700; color: var(--green); }
+
+    /* ─── FEED ─── */
+    .feed {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      scroll-behavior: smooth;
+    }
+    .feed::-webkit-scrollbar { width: 3px; }
+    .feed::-webkit-scrollbar-thumb { background: rgba(26,85,227,.2); border-radius: 2px; }
+
+    /* ─── FEED CARD ─── */
+    .feed-card {
+      background: var(--surface);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1.5px solid transparent;
+      transition: border-color 200ms, transform 200ms;
+      flex-shrink: 0;
+    }
+    .feed-card.correct-ok   { border-color: var(--green);   background: #f6fef2; }
+    .feed-card.correct-scam { border-color: var(--magenta); background: #fff5f7; }
+    .feed-card.wrong        { animation: wrongShake .35s ease; }
+    @keyframes wrongShake {
+      0%,100% { transform: translateX(0); }
+      25%     { transform: translateX(-5px); }
+      75%     { transform: translateX(5px); }
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px 6px;
+    }
+    .card-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .card-sender { font-size: 11px; font-weight: 700; color: var(--text); }
+    .card-time   { font-size: 9px; color: #9CA3AF; margin-left: auto; }
+    .card-badge  { font-size: 9px; font-weight: 700; border-radius: 6px; padding: 2px 7px; margin-left: 6px; }
+    .badge-job      { background: #E0F2FE; color: #0369a1; }
+    .badge-invest   { background: #FEF3C7; color: #92400e; }
+    .badge-prize    { background: #F3E8FF; color: #6b21a8; }
+    .badge-transfer { background: #FFE4E6; color: #9f1239; }
+    .badge-news     { background: #DCFCE7; color: #166534; }
+
+    .card-body { padding: 0 12px 10px; }
+    .card-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; line-height: 1.3; }
+    .card-text  { font-size: 11px; color: var(--text-muted); line-height: 1.45; }
+    .card-highlight {
+      display: inline-block;
+      background: #FEF3C7; color: #92400e;
+      border-radius: 5px;
+      padding: 1px 6px;
+      font-size: 11px; font-weight: 700;
+      margin-top: 4px;
+    }
+    .card-highlight.scam { background: #FFE4E6; color: #9f1239; }
+
+    /* ─── КНОПКИ — насыщенный фон, белый текст всегда ─── */
+    .card-actions { display: flex; border-top: 1px solid #e5e7eb; overflow: hidden; }
+
+    .btn-norm {
+      flex: 1;
+      padding: 13px 8px;
+      background: #16a34a;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 900;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background var(--transition);
+      border-right: 1px solid rgba(255,255,255,.2);
+    }
+    .btn-norm:hover:not(:disabled) { background: #15803d; }
+    .btn-norm:disabled { opacity: .5; cursor: default; }
+
+    .btn-scam {
+      flex: 1;
+      padding: 13px 8px;
+      background: #dc2626;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 900;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background var(--transition);
+    }
+    .btn-scam:hover:not(:disabled) { background: #b91c1c; }
+    .btn-scam:disabled { opacity: .5; cursor: default; }
+
+    /* ─── RESULT TAG ON CARD ─── */
+    .card-result { display: none; align-items: center; gap: 5px; padding: 6px 12px; font-size: 10px; font-weight: 700; }
+    .card-result.show    { display: flex; }
+    .card-result.right   { color: #166534; background: #f0fdf4; }
+    .card-result.wrong-r { color: #9f1239; background: #fff5f5; }
+
+    /* ─── TOOLTIP ─── */
+    .tooltip {
+      position: absolute;
+      left: 12px; right: 12px; bottom: 12px;
+      background: var(--text);
+      border-radius: var(--radius-md);
+      padding: 13px 14px;
+      z-index: 20;
+      box-shadow: 0 6px 24px rgba(0,0,0,.25);
+      transform: translateY(6px);
+      opacity: 0;
+      transition: all 220ms ease;
+      pointer-events: none;
+    }
+    .tooltip.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+    .tooltip-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    .tooltip-tag { font-size: 10px; font-weight: 700; letter-spacing: .07em; }
+    .tooltip-tag.correct { color: var(--green); }
+    .tooltip-tag.wrong   { color: var(--magenta); }
+    .tooltip-close {
+      background: rgba(255,255,255,.12);
+      border: none; color: #fff;
+      border-radius: 6px;
+      width: 20px; height: 20px;
+      cursor: pointer; font-size: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: inherit;
+    }
+    .tooltip-close:hover { background: rgba(255,255,255,.2); }
+    .tooltip-title { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .tooltip-body  { font-size: 11px; color: rgba(255,255,255,.6); line-height: 1.45; }
+
+    /* ─── END SCREEN ─── */
+    .end-screen {
+      position: absolute;
+      inset: 0;
+      background: var(--dark);
+      z-index: 40;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      text-align: center;
+    }
+    .end-screen.show { display: flex; }
+    .end-score { font-size: 56px; font-weight: 900; color: var(--green); letter-spacing: -2px; margin-bottom: 4px; }
+    .end-label { font-size: 12px; color: rgba(255,255,255,.4); margin-bottom: 22px; }
+    .end-title { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+    .end-sub   { font-size: 12px; color: rgba(255,255,255,.5); line-height: 1.5; margin-bottom: 28px; }
+    .btn-end {
+      background: var(--green);
+      color: #1a4a00;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      font-size: 15px;
+      font-weight: 700;
+      width: 100%;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity var(--transition);
+    }
+    .btn-end:active { opacity: 0.85; }
+  </style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="screen">
+
+    <!-- HUD -->
+    <div class="hud">
+      <svg class="hud-bg" viewBox="0 0 320 80" fill="none" preserveAspectRatio="xMidYMid slice">
+        <line x1="0" y1="28" x2="320" y2="28" stroke="#fff" stroke-width=".4" opacity=".08" stroke-dasharray="3 5"/>
+        <line x1="0" y1="65" x2="320" y2="65" stroke="#6EE04A" stroke-width=".4" opacity=".12" stroke-dasharray="3 5"/>
+        <polygon points="270,5 292,5 292,24 270,24" stroke="#6EE04A" stroke-width="1" fill="none" opacity=".25"/>
+      </svg>
+      <div class="hud-c">
+        <div class="hud-row">
+          <div class="hud-title">🔴 Красная кнопка</div>
+          <div class="progress-pill" id="progressPill">1 / 8</div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="hud-sub">
+          <div class="hud-label">ЭТАП 4 / 4</div>
+          <div class="score-disp" id="scoreDisp">★ 0 очков</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feed -->
+    <div class="feed" id="feed"></div>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip">
+      <div class="tooltip-header">
+        <div class="tooltip-tag" id="tooltipTag"></div>
+        <button class="tooltip-close" onclick="closeTooltip()">✕</button>
+      </div>
+      <div class="tooltip-title" id="tooltipTitle"></div>
+      <div class="tooltip-body"  id="tooltipBody"></div>
+    </div>
+
+    <!-- End screen -->
+    <div class="end-screen" id="endScreen">
+      <div class="end-score" id="endScore">+0</div>
+      <div class="end-label">очков заработано</div>
+      <div class="end-title" id="endTitle"></div>
+      <div class="end-sub"   id="endSub"></div>
+      <!--
+        В реальном приложении:
+        gameState.totalScore += score;
+        showScreen('stage-result');
+      -->
+      <button class="btn-end" onclick="alert('→ onComplete(score) в app.js')">Далее →</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  /* ─────────────────────────────────────
+     ДАННЫЕ КАРТОЧЕК
+     isScam: true  → скам (правильно нажать «Скам»)
+     isScam: false → норм (правильно нажать «Норм»)
+  ───────────────────────────────────── */
+  const cards = [
+    {
+      avatar: '💼', sender: 'Работа Онлайн', badge: 'badge-job', badgeText: 'Вакансия',
+      title: 'Менеджер по приёму платежей — 80 000 ₽/мес',
+      text:  'Принимай переводы на свою карту, оставляй 10% себе. Работа удалённая, без опыта.',
+      highlight: 'Принимай переводы на карту', highlightClass: 'scam',
+      isScam: true,
+      correctTitle: 'Скам — классическая схема дроппера',
+      correctBody:  '«Принимать переводы на карту» — это работа дроппером. Тебя используют для отмывания денег, а уголовная ответственность ляжет на тебя.',
+      wrongTitle:   'Это скам — ты пропустил дроппера',
+      wrongBody:    '«Принимать переводы на карту» — незаконная схема отмывания денег мошенников.',
+    },
+    {
+      avatar: '📈', sender: 'InvestPro', badge: 'badge-invest', badgeText: 'Инвестиции',
+      title: 'Вложи 5 000 ₽ — получи 50 000 за 3 дня',
+      text:  'Уникальная стратегия с гарантией 1000% прибыли. Только 10 мест осталось!',
+      highlight: 'Гарантия 1000% прибыли', highlightClass: 'scam',
+      isScam: true,
+      correctTitle: 'Скам — гарантированной прибыли не бывает',
+      correctBody:  'Любое предложение с «гарантией прибыли» — мошенничество. Настоящие инвестиции всегда несут риск потери.',
+      wrongTitle:   'Это скам — гарантий прибыли не существует',
+      wrongBody:    '1000% за 3 дня — пирамида. Никто не может гарантировать такую доходность.',
+    },
+    {
+      avatar: '🏪', sender: 'Ozon Маркет', badge: 'badge-news', badgeText: 'Акция',
+      title: 'Скидка 30% на электронику до конца недели',
+      text:  'Официальная акция Ozon. Скидки на смартфоны, ноутбуки и аксессуары. Проверь в приложении.',
+      highlight: 'Официальная акция Ozon', highlightClass: '',
+      isScam: false,
+      correctTitle: 'Верно — это обычная акция',
+      correctBody:  'Нормальное рекламное предложение: скидка, ограниченный срок, предложение проверить в официальном приложении.',
+      wrongTitle:   'Это обычная акция, не скам',
+      wrongBody:    'Обычные скидки — нормальная практика. Скам — нереальные обещания прибыли или просьбы передать данные карты.',
+    },
+    {
+      avatar: '🎁', sender: 'Призы для вас', badge: 'badge-prize', badgeText: 'Розыгрыш',
+      title: 'Вы выиграли iPhone 15! Заберите приз сейчас',
+      text:  'Вы стали победителем нашего розыгрыша. Для получения приза оплатите доставку — 299 ₽.',
+      highlight: 'Оплатите доставку 299 ₽', highlightClass: 'scam',
+      isScam: true,
+      correctTitle: 'Скам — приза нет, есть только «доставка»',
+      correctBody:  '«Оплати доставку приза» — стандартная схема. После оплаты ничего не придёт. Настоящие призы не требуют оплаты.',
+      wrongTitle:   'Это скам — ты не участвовал в розыгрыше',
+      wrongBody:    'Если ты не участвовал в розыгрыше, ты не мог выиграть. «Оплата доставки» — способ украсть деньги.',
+    },
+    {
+      avatar: '☕', sender: 'Кофейня Бодрость', badge: 'badge-news', badgeText: 'Новость',
+      title: 'Открылась новая точка на Ленинском проспекте',
+      text:  'Приходи на открытие — первый кофе бесплатно. Покажи этот пост на кассе.',
+      highlight: 'Первый кофе бесплатно', highlightClass: '',
+      isScam: false,
+      correctTitle: 'Верно — это обычная реклама',
+      correctBody:  'Стандартное промо: скидка при показе поста, конкретный адрес, реальная выгода. Никаких подозрительных запросов.',
+      wrongTitle:   'Это обычная реклама кофейни',
+      wrongBody:    'Бесплатный кофе при показе поста — обычный маркетинг. Скамом было бы требование ввести данные карты.',
+    },
+    {
+      avatar: '💰', sender: 'Быстрые Деньги', badge: 'badge-transfer', badgeText: 'Перевод',
+      title: 'Срочный займ 50 000 ₽ без проверки кредитной истории',
+      text:  'Одобрение за 5 минут. Для получения переведи страховой взнос 2 000 ₽ на наш счёт.',
+      highlight: 'Переведи страховой взнос', highlightClass: 'scam',
+      isScam: true,
+      correctTitle: 'Скам — легальные займы не требуют предоплаты',
+      correctBody:  'Требование заплатить «взнос» перед займом — классический развод. Банки никогда не берут предоплату.',
+      wrongTitle:   'Это скам — займы без предоплаты',
+      wrongBody:    '«Переведи взнос, чтобы получить займ» — мошенническая схема. Настоящие кредиторы вычитают комиссию из суммы займа.',
+    },
+    {
+      avatar: '🎓', sender: 'Курсы Онлайн', badge: 'badge-job', badgeText: 'Обучение',
+      title: 'Курс Python с нуля — 3 месяца, сертификат',
+      text:  'Записывайся на бесплатное пробное занятие. Преподаватели из Яндекса и Mail.ru.',
+      highlight: 'Бесплатное пробное занятие', highlightClass: '',
+      isScam: false,
+      correctTitle: 'Верно — это обычный образовательный курс',
+      correctBody:  'Бесплатное пробное занятие — стандартная практика онлайн-школ. Нет давления, нет запросов данных карты.',
+      wrongTitle:   'Это обычный курс, не скам',
+      wrongBody:    'Бесплатное первое занятие — нормальный маркетинг. Скам был бы, если бы просили предоплату.',
+    },
+    {
+      avatar: '🤖', sender: 'CryptoBot', badge: 'badge-invest', badgeText: 'Крипта',
+      title: 'Автоторговля криптой — пассивный доход от 300% в месяц',
+      text:  'Наш ИИ-бот торгует за тебя. Минимальный вклад — 10 000 ₽. Выводи прибыль каждый день.',
+      highlight: '300% в месяц', highlightClass: 'scam',
+      isScam: true,
+      correctTitle: 'Скам — 300% в месяц невозможно',
+      correctBody:  'Даже лучшие инвесторы зарабатывают 20–30% в год. 300% в месяц — явная ложь. Это пирамида.',
+      wrongTitle:   'Это скам — 300% в месяц не существует',
+      wrongBody:    'Никакой «ИИ-бот» не даёт 300% в месяц стабильно. Классическая инвестиционная пирамида.',
+    },
+  ];
+
+  /* ─── STATE ─── */
+  let answered    = 0;
+  let score       = 0;
+  let errors      = 0;
+  let tooltipTimer = null;
+  const TOTAL     = cards.length;
+
+  /* ─── BUILD FEED ─── */
+  function buildFeed() {
+    const feed = document.getElementById('feed');
+    cards.forEach((card, i) => {
+      const el = document.createElement('div');
+      el.className = 'feed-card';
+      el.id = 'card-' + i;
+      el.innerHTML = `
+        <div class="card-header">
+          <div class="card-avatar">${card.avatar}</div>
+          <div><div class="card-sender">${card.sender} <span class="card-badge ${card.badge}">${card.badgeText}</span></div></div>
+          <div class="card-time">сейчас</div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">${card.title}</div>
+          <div class="card-text">${card.text}</div>
+          ${card.highlight ? `<div class="card-highlight ${card.highlightClass}">${card.highlight}</div>` : ''}
+        </div>
+        <div class="card-result" id="result-${i}"></div>
+        <div class="card-actions" id="actions-${i}">
+          <button class="btn-norm" onclick="handleChoice(${i}, false)">✓ Норм</button>
+          <button class="btn-scam" onclick="handleChoice(${i}, true)">🚩 Скам</button>
+        </div>`;
+      feed.appendChild(el);
+    });
+  }
+
+  /* ─── CHOICE HANDLER ─── */
+  function handleChoice(i, choseScam) {
+    const card      = cards[i];
+    const cardEl    = document.getElementById('card-' + i);
+    const actionsEl = document.getElementById('actions-' + i);
+    const resultEl  = document.getElementById('result-' + i);
+
+    actionsEl.querySelectorAll('button').forEach(b => b.disabled = true);
+
+    const correct = (choseScam === card.isScam);
+
+    if (correct) {
+      score += 150;
+      cardEl.classList.add(card.isScam ? 'correct-scam' : 'correct-ok');
+      resultEl.className   = 'card-result show right';
+      resultEl.innerHTML   = card.isScam ? '🚩 Правильно — это скам' : '✓ Правильно — это норм';
+      showTooltip(true, card.correctTitle, card.correctBody);
+    } else {
+      errors++;
+      score = Math.max(0, score - 40);
+      cardEl.classList.add('wrong');
+      setTimeout(() => cardEl.classList.remove('wrong'), 400);
+      resultEl.className = 'card-result show wrong-r';
+      resultEl.innerHTML = card.isScam ? '✓ Ошибка — это был скам' : '🚩 Ошибка — это было норм';
+      showTooltip(false, card.wrongTitle, card.wrongBody);
+    }
+
+    document.getElementById('scoreDisp').textContent    = '★ ' + score + ' очков';
+    document.getElementById('progressFill').style.width = (++answered / TOTAL * 100) + '%';
+    document.getElementById('progressPill').textContent = answered + ' / ' + TOTAL;
+
+    if (answered >= TOTAL) setTimeout(endGame, 1200);
+  }
+
+  /* ─── TOOLTIP ─── */
+  function showTooltip(correct, title, body) {
+    const tt  = document.getElementById('tooltip');
+    const tag = document.getElementById('tooltipTag');
+    tag.textContent = correct ? '✓ ВЕРНО' : '✗ ОШИБКА';
+    tag.className   = 'tooltip-tag ' + (correct ? 'correct' : 'wrong');
+    document.getElementById('tooltipTitle').textContent = title;
+    document.getElementById('tooltipBody').textContent  = body;
+    tt.classList.add('show');
+    clearTimeout(tooltipTimer);
+    tooltipTimer = setTimeout(closeTooltip, 4500);
+  }
+
+  function closeTooltip() {
+    document.getElementById('tooltip').classList.remove('show');
+  }
+
+  /* ─── END GAME ─── */
+  function endGame() {
+    closeTooltip();
+    document.getElementById('endScore').textContent = '+' + score;
+
+    if (errors === 0) {
+      document.getElementById('endTitle').textContent = '🌌 Плащ получен! Безупречно!';
+      document.getElementById('endSub').textContent   = 'Ты распознал все схемы без единой ошибки. Твои близкие в безопасности.';
+    } else {
+      document.getElementById('endTitle').textContent = '🌌 Плащ «Скрытый баланс» получен';
+      document.getElementById('endSub').textContent   = 'Ошибок: ' + errors + '. Главное правило: если обещают лёгкие деньги — это ловушка.';
+    }
+
+    document.getElementById('endScreen').classList.add('show');
+  }
+
+  /* ─── INIT ─── */
+  buildFeed();
+</script>
+
+</body>
+</html>

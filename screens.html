@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кибер.Рыцарь — Все экраны</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue:#1A55E3;--blue-soft:#E5EDFF;--green:#6EE04A;--green-soft:#E4FBD9;
+      --magenta:#FF3B6B;--purple:#8B5CF6;--dark:#0a0a1e;--text:#0D1B4B;
+      --text-muted:#6B7280;--bg:#F0F4FF;--surface:#FFFFFF;
+      --radius-md:14px;--radius-lg:20px;--transition:220ms ease;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Inter',sans-serif;background:#1a1a2e;display:flex;flex-direction:column;align-items:center;padding:80px 20px 40px;gap:20px;min-height:100vh}
+    .switcher{position:fixed;top:14px;left:50%;transform:translateX(-50%);display:flex;flex-wrap:wrap;gap:5px;justify-content:center;background:rgba(10,10,30,.92);border:1px solid rgba(255,255,255,.12);border-radius:40px;padding:6px 10px;z-index:100;max-width:96vw;backdrop-filter:blur(8px)}
+    .sw-btn{background:transparent;border:none;color:rgba(255,255,255,.45);font-size:11px;font-weight:700;font-family:inherit;padding:5px 12px;border-radius:20px;cursor:pointer;transition:all var(--transition);white-space:nowrap}
+    .sw-btn.active{background:var(--blue);color:#fff}
+    .sw-sep{color:rgba(255,255,255,.15);font-size:11px;padding:5px 2px;user-select:none}
+    .phone{width:320px;border-radius:44px;border:8px solid #0d0d1a;overflow:hidden;background:#0d0d1a;box-shadow:0 32px 80px rgba(0,0,0,.6)}
+    .screen{width:100%;min-height:640px;display:none;flex-direction:column;position:relative;overflow:hidden}
+    .screen.active{display:flex}
+  </style>
+</head>
+<body>
+<div class="switcher">
+  <button class="sw-btn active" onclick="show('main',this)">Главный</button>
+  <span class="sw-sep">|</span>
+  <button class="sw-btn" onclick="show('ob1',this)">Онб 1</button>
+  <button class="sw-btn" onclick="show('ob2',this)">Онб 2</button>
+  <button class="sw-btn" onclick="show('ob3',this)">Онб 3</button>
+  <button class="sw-btn" onclick="show('ob4',this)">Онб 4</button>
+  <span class="sw-sep">|</span>
+  <button class="sw-btn" onclick="show('game1',this)">Игра 1</button>
+  <button class="sw-btn" onclick="show('game2',this)">Игра 2</button>
+  <button class="sw-btn" onclick="show('game3',this)">Игра 3</button>
+  <button class="sw-btn" onclick="show('game4',this)">Игра 4</button>
+  <span class="sw-sep">|</span>
+  <button class="sw-btn" onclick="show('rw1',this)">Награда 1</button>
+  <button class="sw-btn" onclick="show('rw2',this)">Награда 2</button>
+  <button class="sw-btn" onclick="show('rw3',this)">Награда 3</button>
+  <button class="sw-btn" onclick="show('final',this)">Финал</button>
+</div>
+<div class="phone" id="phone">
+  <div class="screen active" id="screen-main" style="background:#0a0a1e;align-items:center;justify-content:center;min-height:640px">
+    <p style="color:#6EE04A;font-size:13px;font-weight:700;text-align:center;padding:40px 24px">
+      ● ГЛАВНЫЙ ЭКРАН<br><br>
+      <span style="color:rgba(255,255,255,.5);font-weight:400;font-size:12px">Скопируй содержимое из screens_old.html<br>или используй этот файл как шаблон для Cursor</span>
+    </p>
+    <button onclick="show('ob1',null)" style="background:#1A55E3;color:#fff;border:none;border-radius:14px;padding:14px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin:0 24px">Начать игру →</button>
+  </div>
+  <div class="screen" id="screen-ob1" style="background:#0a0a1e;align-items:center;justify-content:center;text-align:center;padding:40px 24px;gap:16px">
+    <p style="color:#6EE04A;font-size:11px;font-weight:700;letter-spacing:.1em">● ЭТАП 1 / 4 — НЕОЖИДАННЫЕ ЗВОНКИ</p>
+    <p style="color:#fff;font-size:24px;font-weight:900;line-height:1.1">Читай реплики.<br>Флагь мошенника.</p>
+    <p style="color:rgba(255,255,255,.55);font-size:13px;line-height:1.55;max-width:260px">Фразы из звонка появляются одна за другой. Тапни на подозрительную реплику — поставь красный флаг 🚩.</p>
+    <button onclick="show('game1',null)" style="background:#1A55E3;color:#fff;border:none;border-radius:14px;padding:16px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;max-width:268px">Начать этап →</button>
+  </div>
+  <div class="screen" id="screen-ob2" style="background:#0a0a1e;align-items:center;justify-content:center;text-align:center;padding:40px 24px;gap:16px">
+    <p style="color:#6EE04A;font-size:11px;font-weight:700;letter-spacing:.1em">● ЭТАП 2 / 4 — ПОДДЕЛЬНЫЕ САЙТЫ</p>
+    <p style="color:#fff;font-size:24px;font-weight:900;line-height:1.1">Два сайта.<br>Один — ловушка.</p>
+    <p style="color:rgba(255,255,255,.55);font-size:13px;line-height:1.55;max-width:260px">Свайпни влево 🚩 если сайт поддельный, вправо ✓ если настоящий. Всего 5 раундов.</p>
+    <button onclick="show('game2',null)" style="background:#1A55E3;color:#fff;border:none;border-radius:14px;padding:16px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;max-width:268px">Начать этап →</button>
+  </div>
+  <div class="screen" id="screen-ob3" style="background:#0a0a1e;align-items:center;justify-content:center;text-align:center;padding:40px 24px;gap:16px">
+    <p style="color:#6EE04A;font-size:11px;font-weight:700;letter-spacing:.1em">● ЭТАП 3 / 4 — ВРЕДОНОСНОЕ ПО</p>
+    <p style="color:#fff;font-size:24px;font-weight:900;line-height:1.1">Найди трояны<br>в телефоне.</p>
+    <p style="color:rgba(255,255,255,.55);font-size:13px;line-height:1.55;max-width:260px">Рабочий стол телефона. Найди и тапни все вредоносные приложения. Ошибёшься — иконка исчезнет.</p>
+    <button onclick="show('game3',null)" style="background:#1A55E3;color:#fff;border:none;border-radius:14px;padding:16px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;max-width:268px">Начать этап →</button>
+  </div>
+  <div class="screen" id="screen-ob4" style="background:#0a0a1e;align-items:center;justify-content:center;text-align:center;padding:40px 24px;gap:16px">
+    <p style="color:#6EE04A;font-size:11px;font-weight:700;letter-spacing:.1em">● ЭТАП 4 / 4 — ЛЁГКИЕ ДЕНЬГИ</p>
+    <p style="color:#fff;font-size:24px;font-weight:900;line-height:1.1">Лента офферов.<br>Скам или норм?</p>
+    <p style="color:rgba(255,255,255,.55);font-size:13px;line-height:1.55;max-width:260px">Листай карточки с предложениями. На каждую — «Норм» или «Скам». Доверяй интуиции.</p>
+    <button onclick="show('game4',null)" style="background:#1A55E3;color:#fff;border:none;border-radius:14px;padding:16px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;max-width:268px">Начать этап →</button>
+  </div>
+  <div class="screen" id="screen-game1" style="background:#F0F4FF;align-items:center;justify-content:center;gap:12px;padding:40px 24px;text-align:center">
+    <p style="font-size:48px">⚡</p>
+    <p style="background:#E5EDFF;color:#1A55E3;border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700">Этап 1 / 4</p>
+    <p style="font-size:18px;font-weight:900;color:#0D1B4B">Детектор лжи</p>
+    <p style="font-size:13px;color:#6B7280;line-height:1.5">Здесь монтируется game1.js<br>через Game1.init() и Game1.start()</p>
+    <button onclick="show('rw1',null)" style="background:#1A55E3;color:#fff;border:none;border-radius:14px;padding:14px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px">→ Симулировать завершение</button>
+  </div>
+  <div class="screen" id="screen-game2" style="background:#F0F4FF;align-items:center;justify-content:center;gap:12px;padding:40px 24px;text-align:center">
+    <p style="font-size:48px">🔍</p>
+    <p style="background:#E5EDFF;color:#1A55E3;border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700">Этап 2 / 4</p>
+    <p style="font-size:18px;font-weight:900;color:#0D1B4B">Найди подделку</p>
+    <p style="font-size:13px;color:#6B7280;line-height:1.5">Здесь монтируется game2.js<br>через Game2.init() и Game2.start()</p>
+    <button onclick="show('rw2',null)" style="background:#1A55E3;color:#fff;border:none;border-radius:14px;padding:14px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px">→ Симулировать завершение</button>
+  </div>
+  <div class="screen" id="screen-game3" style="background:#F0F4FF;align-items:center;justify-content:center;gap:12px;padding:40px 24px;text-align:center">
+    <p style="font-size:48px">💣</p>
+    <p style="background:#E5EDFF;color:#1A55E3;border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700">Этап 3 / 4</p>
+    <p style="font-size:18px;font-weight:900;color:#0D1B4B">Сапёр</p>
+    <p style="font-size:13px;color:#6B7280;line-height:1.5">Здесь монтируется game3.js<br>через Game3.init() и Game3.start()</p>
+    <button onclick="show('rw3',null)" style="background:#1A55E3;color:#fff;border:none;border-radius:14px;padding:14px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px">→ Симулировать завершение</button>
+  </div>
+  <div class="screen" id="screen-game4" style="background:#F0F4FF;align-items:center;justify-content:center;gap:12px;padding:40px 24px;text-align:center">
+    <p style="font-size:48px">🔴</p>
+    <p style="background:#E5EDFF;color:#1A55E3;border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700">Этап 4 / 4</p>
+    <p style="font-size:18px;font-weight:900;color:#0D1B4B">Красная кнопка</p>
+    <p style="font-size:13px;color:#6B7280;line-height:1.5">Здесь монтируется game4.js<br>через Game4.init() и Game4.start()</p>
+    <button onclick="show('final',null)" style="background:#1A55E3;color:#fff;border:none;border-radius:14px;padding:14px 28px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px">→ Симулировать завершение</button>
+  </div>
+  <div class="screen" id="screen-rw1" style="background:#0a0a1e;align-items:center;justify-content:center;text-align:center;padding:32px 24px;gap:14px">
+    <p style="background:rgba(26,85,227,.15);color:#1A55E3;border:1px solid rgba(26,85,227,.35);border-radius:20px;padding:5px 14px;font-size:10px;font-weight:700">🪖 ПОЛУЧЕН ПЕРВЫЙ ПРЕДМЕТ</p>
+    <p style="font-size:26px;font-weight:900;color:#fff;line-height:1.1">Ты надел<br><span style="color:#1A55E3">Шлем</span></p>
+    <p style="font-size:12px;color:rgba(255,255,255,.45)">Теперь твой разум защищён от телефонных манипуляций</p>
+    <p style="font-size:64px;margin:8px 0">🪖</p>
+    <div style="background:rgba(26,85,227,.2);border:1px solid rgba(26,85,227,.4);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;width:100%;text-align:left">
+      <div style="width:42px;height:42px;border-radius:11px;background:rgba(26,85,227,.35);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px">🪖</div>
+      <div><p style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px">Шлем «Кодовое слово»</p><p style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.35">Если мошенники выдают себя за банк — без кодового слова им не поверят</p></div>
+    </div>
+    <button onclick="show('ob2',null)" style="background:#6EE04A;color:#1a4a00;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;width:100%;cursor:pointer;font-family:inherit">Следующий этап →</button>
+  </div>
+  <div class="screen" id="screen-rw2" style="background:#0a0a1e;align-items:center;justify-content:center;text-align:center;padding:32px 24px;gap:14px">
+    <p style="background:rgba(139,92,246,.15);color:#8B5CF6;border:1px solid rgba(139,92,246,.35);border-radius:20px;padding:5px 14px;font-size:10px;font-weight:700">🔒 ПОЛУЧЕН ВТОРОЙ ПРЕДМЕТ</p>
+    <p style="font-size:26px;font-weight:900;color:#fff;line-height:1.1">Ты надел<br><span style="color:#8B5CF6">Броню</span></p>
+    <p style="font-size:12px;color:rgba(255,255,255,.45)">Поддельные сайты больше не обманут тебя</p>
+    <p style="font-size:64px;margin:8px 0">🔒</p>
+    <div style="background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.4);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;width:100%;text-align:left">
+      <div style="width:42px;height:42px;border-radius:11px;background:rgba(139,92,246,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px">🔒</div>
+      <div><p style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px">Броня «Пароль для покупок»</p><p style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.35">Даже если троян в телефоне — без пароля покупки на Ozon не пройдут</p></div>
+    </div>
+    <button onclick="show('ob3',null)" style="background:#6EE04A;color:#1a4a00;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;width:100%;cursor:pointer;font-family:inherit">Следующий этап →</button>
+  </div>
+  <div class="screen" id="screen-rw3" style="background:#0a0a1e;align-items:center;justify-content:center;text-align:center;padding:32px 24px;gap:14px">
+    <p style="background:rgba(110,224,74,.15);color:#6EE04A;border:1px solid rgba(110,224,74,.35);border-radius:20px;padding:5px 14px;font-size:10px;font-weight:700">🛡️ ПОЛУЧЕН ТРЕТИЙ ПРЕДМЕТ</p>
+    <p style="font-size:26px;font-weight:900;color:#fff;line-height:1.1">Ты взял<br><span style="color:#6EE04A">Щит</span></p>
+    <p style="font-size:12px;color:rgba(255,255,255,.45)">Лимиты ограничат урон, даже если карта скомпрометирована</p>
+    <p style="font-size:64px;margin:8px 0">🛡️</p>
+    <div style="background:rgba(110,224,74,.1);border:1px solid rgba(110,224,74,.4);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;width:100%;text-align:left">
+      <div style="width:42px;height:42px;border-radius:11px;background:rgba(110,224,74,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px">🛡️</div>
+      <div><p style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px">Щит «Лимиты на траты»</p><p style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.35">Даже если карта скомпрометирована — лимиты не дадут украсть много</p></div>
+    </div>
+    <button onclick="show('ob4',null)" style="background:#6EE04A;color:#1a4a00;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;width:100%;cursor:pointer;font-family:inherit">Последний этап →</button>
+  </div>
+  <div class="screen" id="screen-final" style="background:#0a0a1e;align-items:center;justify-content:center;text-align:center;padding:32px 24px;gap:12px">
+    <p style="background:rgba(139,92,246,.15);color:#8B5CF6;border:1px solid rgba(139,92,246,.35);border-radius:20px;padding:5px 14px;font-size:10px;font-weight:700">★ ТРЕНИРОВКА ЗАВЕРШЕНА</p>
+    <p style="font-size:26px;font-weight:900;color:#fff;line-height:1.1">Ты стал<br><span style="color:#8B5CF6">Кибер-Рыцарем</span></p>
+    <p style="font-size:12px;color:rgba(255,255,255,.45)">Шлем, броня, щит и плащ — ты полностью экипирован</p>
+    <p style="font-size:72px;margin:4px 0">⚔️</p>
+    <p style="font-size:11px;color:rgba(255,255,255,.3)">Полный SVG-персонаж из screens_old.html / final screen</p>
+    <button onclick="window.open('https://finance.ozon.ru/promo/security','_blank')" style="background:#1A55E3;color:#fff;border:none;border-radius:14px;padding:16px;font-size:15px;font-weight:700;width:100%;cursor:pointer;font-family:inherit">Полный гайд по защите →</button>
+    <button style="background:rgba(255,255,255,.07);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:13px;font-size:13px;font-weight:700;width:100%;cursor:pointer;font-family:inherit">Поделиться результатом</button>
+  </div>
+</div>
+<script>
+function show(id,btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.sw-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+}
+</script>
+</body>
+</html>

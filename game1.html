@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Кибер.Рыцарь — Этап 1: Детектор лжи</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    /* ─── DESIGN TOKENS ─── */
+    :root {
+      --blue:        #1A55E3;
+      --blue-soft:   #E5EDFF;
+      --green:       #6EE04A;
+      --green-soft:  #E4FBD9;
+      --magenta:     #FF3B6B;
+      --yellow:      #f0a500;
+      --yellow-soft: #FFF3CC;
+      --dark:        #0a0a1e;
+      --text:        #0D1B4B;
+      --text-muted:  #6B7280;
+      --bg:          #F0F4FF;
+      --surface:     #FFFFFF;
+
+      --radius-sm:   8px;
+      --radius-md:   14px;
+      --radius-lg:   20px;
+      --transition:  220ms ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #1a1a2e;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    /* ─── PHONE FRAME ─── */
+    .phone {
+      width: 320px;
+      border-radius: 44px;
+      border: 8px solid #0d0d1a;
+      overflow: hidden;
+      background: #0d0d1a;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+    }
+
+    /* ─── GAME SCREEN ─── */
+    .screen {
+      width: 100%;
+      height: 660px;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ─── HUD ─── */
+    .hud {
+      background: var(--blue);
+      padding: 16px 18px 14px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .hud-bg { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .hud-content { position: relative; z-index: 2; }
+    .hud-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .hud-title { font-size: 13px; font-weight: 900; color: #fff; letter-spacing: -.2px; }
+
+    .timer {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,59,107,.9);
+      border-radius: 20px;
+      padding: 5px 11px;
+      transition: background 300ms ease;
+    }
+    .timer.urgent { background: var(--magenta); }
+    .timer-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .timer-text { font-size: 13px; font-weight: 900; color: #fff; }
+
+    .progress-bar {
+      background: rgba(255,255,255,.2);
+      border-radius: 4px;
+      height: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 4px;
+      border-radius: 4px;
+      background: var(--green);
+      width: 0%;
+      transition: width 400ms ease;
+    }
+    .hud-sub {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+    .hud-label { font-size: 10px; color: rgba(255,255,255,.55); font-weight: 700; letter-spacing: .06em; }
+    .flags-count { font-size: 10px; font-weight: 700; color: var(--green); }
+
+    /* ─── CHAT AREA ─── */
+    .chat {
+      flex: 1;
+      padding: 14px 14px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    /* scrollbar */
+    .chat::-webkit-scrollbar { width: 3px; }
+    .chat::-webkit-scrollbar-track { background: transparent; }
+    .chat::-webkit-scrollbar-thumb { background: rgba(26,85,227,.2); border-radius: 2px; }
+
+    /* ─── CALLER BAR ─── */
+    .caller-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 10px 12px;
+      border: 1px solid rgba(26,85,227,.1);
+      margin-bottom: 4px;
+      flex-shrink: 0;
+    }
+    .caller-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .caller-name { font-size: 12px; font-weight: 700; color: var(--text); }
+    .caller-sub  { font-size: 10px; color: var(--text-muted); }
+    .caller-badge {
+      margin-left: auto;
+      background: var(--yellow-soft);
+      color: #7a5a00;
+      border-radius: var(--radius-sm);
+      padding: 3px 8px;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    /* ─── MESSAGE BUBBLES ─── */
+    .msg {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 350ms ease, transform 350ms ease;
+    }
+    .msg.visible { opacity: 1; transform: translateY(0); }
+
+    .bubble {
+      border-radius: 16px;
+      padding: 10px 13px;
+      font-size: 12px;
+      line-height: 1.5;
+      cursor: pointer;
+      transition: all 180ms ease;
+      position: relative;
+      max-width: 240px;
+      border: 1.5px solid transparent;
+      user-select: none;
+    }
+
+    /* caller bubble — default */
+    .bubble.caller {
+      background: var(--surface);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+      align-self: flex-start;
+    }
+    .bubble.caller:not(.done):hover {
+      border-color: rgba(255,59,107,.25);
+      background: #fff9fa;
+    }
+
+    /* states */
+    .bubble.flagged  { background: #FFDDE8; border-color: var(--magenta); color: #c20048; cursor: default; }
+    .bubble.safe-ok  { background: var(--green-soft); border-color: var(--green); color: #1a5200; cursor: default; }
+    .bubble.wrong    { background: var(--yellow-soft); border-color: var(--yellow); color: #7a5a00; cursor: default; animation: shake .35s ease; }
+    .bubble.done     { cursor: default; }
+
+    /* system message */
+    .bubble.system {
+      background: rgba(26,85,227,.08);
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 700;
+      align-self: center;
+      border-radius: var(--radius-sm);
+      padding: 5px 10px;
+      cursor: default;
+      max-width: 100%;
+      border: none;
+    }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-5px); }
+      75%      { transform: translateX(5px); }
+    }
+
+    /* badges */
+    .flag-badge, .safe-badge, .wrong-badge {
+      position: absolute;
+      right: -8px; top: -8px;
+      border-radius: 50%;
+      width: 20px; height: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px;
+      border: 2px solid var(--bg);
+    }
+    .flag-badge  { background: var(--magenta); }
+    .safe-badge  { background: var(--green); }
+    .wrong-badge { background: var(--yellow); }
+
+    .msg-time { font-size: 9px; color: #9CA3AF; padding: 0 4px; }
+
+    /* ─── HINT BAR ─── */
+    .hint {
+      background: var(--surface);
+      border-top: 1px solid rgba(26,85,227,.08);
+      padding: 10px 14px;
+      flex-shrink: 0;
+    }
+    .hint-text { font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.4; }
+    .hint-text span { color: var(--magenta); font-weight: 700; }
+
+    /* ─── TOOLTIP ─── */
+    .tooltip {
+      position: absolute;
+      left: 14px; right: 14px;
+      bottom: 60px;
+      background: var(--text);
+      border-radius: var(--radius-md);
+      padding: 13px 14px;
+      z-index: 20;
+      box-shadow: 0 6px 24px rgba(0,0,0,.25);
+      transform: translateY(8px);
+      opacity: 0;
+      transition: all 220ms ease;
+      pointer-events: none;
+    }
+    .tooltip.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+
+    .tooltip-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .tooltip-tag { font-size: 10px; font-weight: 700; letter-spacing: .07em; }
+    .tooltip-tag.wrong   { color: var(--yellow); }
+    .tooltip-tag.correct { color: var(--green); }
+
+    .tooltip-close {
+      background: rgba(255,255,255,.12);
+      border: none;
+      color: #fff;
+      border-radius: 6px;
+      width: 20px; height: 20px;
+      cursor: pointer;
+      font-size: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: inherit;
+      flex-shrink: 0;
+    }
+    .tooltip-close:hover { background: rgba(255,255,255,.2); }
+
+    .tooltip-title { font-size: 12px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .tooltip-body  { font-size: 11px; color: rgba(255,255,255,.6); line-height: 1.45; }
+
+    /* ─── END SCREEN ─── */
+    .end-screen {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: var(--dark);
+      z-index: 30;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      text-align: center;
+    }
+    .end-screen.show { display: flex; }
+    .end-score { font-size: 52px; font-weight: 900; color: var(--green); letter-spacing: -2px; margin-bottom: 4px; }
+    .end-label { font-size: 13px; color: rgba(255,255,255,.45); margin-bottom: 24px; }
+    .end-title { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+    .end-sub   { font-size: 13px; color: rgba(255,255,255,.5); line-height: 1.5; margin-bottom: 32px; }
+    .btn-end {
+      background: var(--green);
+      color: #1a4a00;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      font-size: 15px;
+      font-weight: 700;
+      width: 100%;
+      cursor: pointer;
+      font-family: inherit;
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="screen" id="gameScreen">
+
+    <!-- HUD -->
+    <div class="hud">
+      <svg class="hud-bg" viewBox="0 0 320 90" fill="none" preserveAspectRatio="xMidYMid slice">
+        <line x1="0" y1="30" x2="320" y2="30" stroke="#fff" stroke-width=".4" opacity=".08" stroke-dasharray="3 5"/>
+        <line x1="0" y1="70" x2="320" y2="70" stroke="#6EE04A" stroke-width=".4" opacity=".12" stroke-dasharray="3 5"/>
+        <polygon points="270,6 290,6 290,26 270,26" stroke="#6EE04A" stroke-width="1" fill="none" opacity=".25"/>
+        <polygon points="16,58 24,70 16,82 8,70" stroke="#fff" stroke-width=".8" fill="none" opacity=".12"/>
+      </svg>
+      <div class="hud-content">
+        <div class="hud-row">
+          <div class="hud-title">⚡ Детектор лжи</div>
+          <div class="timer" id="timerEl">
+            <div class="timer-dot"></div>
+            <div class="timer-text" id="timerDisplay">0:45</div>
+          </div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="hud-sub">
+          <div class="hud-label">ЭТАП 1 / 4</div>
+          <div class="flags-count" id="flagCount">🚩 0 флагов</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat -->
+    <div class="chat" id="chat">
+      <div class="caller-bar">
+        <div class="caller-avatar">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="6" r="3" fill="#fff"/>
+            <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="caller-name">Служба безопасности Ozon</div>
+          <div class="caller-sub">+7 (800) 234-56-78</div>
+        </div>
+        <div class="caller-badge">⚠ Проверь</div>
+      </div>
+      <div class="msg visible">
+        <div class="bubble system">Звонок начался · 14:32</div>
+      </div>
+    </div>
+
+    <!-- Hint -->
+    <div class="hint">
+      <div class="hint-text">Тапни на реплику → <span>🚩 отметь мошенника</span></div>
+    </div>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip">
+      <div class="tooltip-header">
+        <div class="tooltip-tag" id="tooltipTag"></div>
+        <button class="tooltip-close" onclick="closeTooltip()">✕</button>
+      </div>
+      <div class="tooltip-title" id="tooltipTitle"></div>
+      <div class="tooltip-body" id="tooltipBody"></div>
+    </div>
+
+    <!-- End screen -->
+    <div class="end-screen" id="endScreen">
+      <div class="end-score" id="endScore">+720</div>
+      <div class="end-label">очков заработано</div>
+      <div class="end-title" id="endTitle">Шлем получен!</div>
+      <div class="end-sub" id="endSub"></div>
+      <!--
+        В реальном приложении кнопка вызывает app.js:
+        gameState.totalScore += score;
+        showScreen('stage-result');
+      -->
+      <button class="btn-end" onclick="alert('→ вызов onComplete(score) в app.js')">Далее →</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  /* ─────────────────────────────────────
+     ДАННЫЕ РЕПЛИК
+     danger: true  → мошенническая (флаг = правильно)
+     danger: false → безопасная    (флаг = ошибка)
+  ───────────────────────────────────── */
+  const messages = [
+    {
+      text: "Здравствуйте! Меня зовут Алексей, я сотрудник службы безопасности Ozon Банка.",
+      time: "14:32",
+      danger: false,
+      wrongTitle:   "Это не признак мошенничества",
+      wrongBody:    "Представиться — нормально. Мошенники обычно раскрываются позже, когда просят данные или торопят вас."
+    },
+    {
+      text: "По вашему счёту зафиксирована подозрительная активность. Нам нужно срочно проверить данные.",
+      time: "14:32",
+      danger: true,
+      correctTitle: "Правильно — это давление через страх",
+      correctBody:  "«Срочно», «подозрительная активность» — классические триггеры. Реальный банк не требует немедленных действий по телефону."
+    },
+    {
+      text: "Назовите код из SMS, который только что пришёл на ваш номер.",
+      time: "14:33",
+      danger: true,
+      correctTitle: "Правильно — банк никогда не просит SMS-код",
+      correctBody:  "Ни один сотрудник банка не имеет права запрашивать одноразовые коды из SMS. Это главный признак мошенника."
+    },
+    {
+      text: "Это стандартная процедура верификации, займёт не более двух минут.",
+      time: "14:33",
+      danger: false,
+      wrongTitle:   "Эта реплика не опасна сама по себе",
+      wrongBody:    "Слова о «стандартной процедуре» звучат убедительно, но не являются признаком мошенничества. Опасны конкретные просьбы — назвать код, перевести деньги."
+    },
+    {
+      text: "Для вашей защиты нам нужно перевести средства на безопасный счёт прямо сейчас.",
+      time: "14:34",
+      danger: true,
+      correctTitle: "Правильно — «безопасный счёт» не существует",
+      correctBody:  "Банки никогда не просят переводить деньги на «защитный» счёт. Это и есть мошеннический счёт."
+    },
+    {
+      text: "Пожалуйста, никому не сообщайте о нашем разговоре — это конфиденциально.",
+      time: "14:34",
+      danger: true,
+      correctTitle: "Правильно — просьба о секретности это красный флаг",
+      correctBody:  "Настоящий банк никогда не просит скрывать разговор. Эта просьба нужна, чтобы вы не успели посоветоваться с близкими."
+    },
+    {
+      text: "Если хотите — можете перезвонить нам по номеру на обороте вашей карты.",
+      time: "14:35",
+      danger: false,
+      wrongTitle:   "Это признак настоящего банка",
+      wrongBody:    "Предложение перезвонить по официальному номеру — правильное поведение. Мошенники никогда так не говорят, потому что боятся потерять контакт."
+    }
+  ];
+
+  /* ─── STATE ─── */
+  let flagCount   = 0;
+  let errorCount  = 0;
+  let revealed    = 0;
+  let score       = 0;
+  let tooltipTimer = null;
+  let gameOver    = false;
+
+  const SCORE_CORRECT = 150;
+  const SCORE_PENALTY = 50;
+  const TOTAL_DANGER  = messages.filter(m => m.danger).length; // 4
+
+  /* ─── HELPERS ─── */
+  function updateProgress() {
+    document.getElementById('progressFill').style.width =
+      Math.round((revealed / messages.length) * 100) + '%';
+  }
+
+  function updateFlagDisplay() {
+    const n = flagCount;
+    const word = n === 1 ? 'флаг' : n < 5 ? 'флага' : 'флагов';
+    document.getElementById('flagCount').textContent = '🚩 ' + n + ' ' + word;
+  }
+
+  function showTooltip(isCorrect, msg) {
+    const tt    = document.getElementById('tooltip');
+    const tag   = document.getElementById('tooltipTag');
+    const title = document.getElementById('tooltipTitle');
+    const body  = document.getElementById('tooltipBody');
+
+    if (isCorrect) {
+      tag.textContent  = '✓ ВЕРНО';
+      tag.className    = 'tooltip-tag correct';
+      title.textContent = msg.correctTitle;
+      body.textContent  = msg.correctBody;
+    } else {
+      tag.textContent  = '✗ ОШИБКА';
+      tag.className    = 'tooltip-tag wrong';
+      title.textContent = msg.wrongTitle;
+      body.textContent  = msg.wrongBody;
+    }
+
+    tt.classList.add('show');
+    clearTimeout(tooltipTimer);
+    tooltipTimer = setTimeout(closeTooltip, 4500);
+  }
+
+  function closeTooltip() {
+    document.getElementById('tooltip').classList.remove('show');
+  }
+
+  function handleTap(bubble, msg) {
+    if (bubble.classList.contains('done') || gameOver) return;
+    bubble.classList.add('done');
+
+    if (msg.danger) {
+      /* правильный флаг */
+      flagCount++;
+      score += SCORE_CORRECT;
+      bubble.classList.add('flagged');
+      addBadge(bubble, 'flag-badge', '🚩');
+      showTooltip(true, msg);
+      updateFlagDisplay();
+      checkWin();
+    } else {
+      /* ошибочный флаг */
+      errorCount++;
+      score = Math.max(0, score - SCORE_PENALTY);
+      bubble.classList.add('wrong');
+      addBadge(bubble, 'wrong-badge', '✗');
+      showTooltip(false, msg);
+      setTimeout(() => {
+        bubble.classList.remove('wrong');
+        bubble.classList.add('safe-ok');
+        bubble.querySelector('.wrong-badge')?.remove();
+        addBadge(bubble, 'safe-badge', '✓');
+      }, 1200);
+    }
+  }
+
+  function addBadge(parent, className, text) {
+    const b = document.createElement('div');
+    b.className = className;
+    b.textContent = text;
+    parent.appendChild(b);
+  }
+
+  function checkWin() {
+    if (flagCount >= TOTAL_DANGER) {
+      setTimeout(endGame, 800);
+    }
+  }
+
+  function endGame() {
+    gameOver = true;
+    clearInterval(timerInterval);
+    closeTooltip();
+
+    const es    = document.getElementById('endScreen');
+    const title = document.getElementById('endTitle');
+    const sub   = document.getElementById('endSub');
+
+    document.getElementById('endScore').textContent = '+' + score;
+
+    if (errorCount === 0) {
+      title.textContent = '🪖 Шлем получен! Без единой ошибки!';
+      sub.textContent   = 'Ты распознал все мошеннические реплики и не попался ни разу. Отличная реакция!';
+    } else if (errorCount <= 2) {
+      title.textContent = '🪖 Шлем получен!';
+      sub.textContent   = 'Ты нашёл всех мошенников, но допустил ' + errorCount + (errorCount === 1 ? ' ошибку' : ' ошибки') + '. В следующий раз будет точнее.';
+    } else {
+      title.textContent = '🪖 Шлем получен, но с трудом';
+      sub.textContent   = 'Ошибок: ' + errorCount + '. Потренируйся отличать нейтральные реплики от реально опасных.';
+    }
+
+    es.classList.add('show');
+  }
+
+  /* ─── REVEAL MESSAGES ONE BY ONE ─── */
+  function revealNext() {
+    if (revealed >= messages.length || gameOver) return;
+    const msg  = messages[revealed];
+    const chat = document.getElementById('chat');
+
+    const msgEl  = document.createElement('div');
+    msgEl.className = 'msg';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble caller';
+    bubble.textContent = msg.text;
+    bubble.addEventListener('click', () => handleTap(bubble, msg));
+
+    const timeEl = document.createElement('div');
+    timeEl.className = 'msg-time';
+    timeEl.textContent = msg.time;
+
+    msgEl.appendChild(bubble);
+    msgEl.appendChild(timeEl);
+    chat.appendChild(msgEl);
+
+    /* trigger animation */
+    requestAnimationFrame(() => requestAnimationFrame(() => msgEl.classList.add('visible')));
+
+    chat.scrollTop = chat.scrollHeight;
+    revealed++;
+    updateProgress();
+
+    if (revealed < messages.length) {
+      setTimeout(revealNext, 1400 + Math.random() * 700);
+    } else {
+      /* все реплики показаны — дать время отметить, потом завершить */
+      setTimeout(() => { if (!gameOver) endGame(); }, 8000);
+    }
+  }
+
+  /* ─── TIMER ─── */
+  let timeLeft = 45;
+  const timerEl = document.getElementById('timerEl');
+  const timerDisplay = document.getElementById('timerDisplay');
+
+  const timerInterval = setInterval(() => {
+    if (gameOver) { clearInterval(timerInterval); return; }
+    timeLeft--;
+    if (timeLeft < 0) { clearInterval(timerInterval); endGame(); return; }
+    const m = Math.floor(timeLeft / 60);
+    const s = timeLeft % 60;
+    timerDisplay.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    if (timeLeft <= 10) timerEl.classList.add('urgent');
+  }, 1000);
+
+  /* ─── START ─── */
+  setTimeout(revealNext, 700);
+</script>
+
+</body>
+</html>
