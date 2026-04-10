@@ -1,0 +1,1390 @@
+/**
+ * Стили мини-игр: этап 2 (.game2-*), этап 3 (.game3-*), этап 4 (.game4-*).
+ * Токены --blue, --green и т.д. наследуются из :root (main.css).
+ */
+.game2-root {
+  width: 100%;
+  min-height: 620px;
+  height: 100%;
+  font-family: "Inter", var(--ds-font-sans, system-ui, sans-serif);
+}
+
+.game2-root .game2-screen {
+  width: 100%;
+  min-height: 620px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.game2-root .game2-hud {
+  background: var(--blue);
+  padding: 16px 18px 13px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.game2-root .game2-hud-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.game2-root .game2-hud-c {
+  position: relative;
+  z-index: 2;
+}
+
+.game2-root .game2-hud-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.game2-root .game2-hud-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #fff;
+}
+
+.game2-root .game2-round-pill {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.game2-root .game2-progress-bar {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  height: 4px;
+  overflow: hidden;
+}
+
+.game2-root .game2-progress-fill {
+  height: 4px;
+  border-radius: 4px;
+  background: var(--green);
+  width: 0%;
+  transition: width 500ms ease;
+}
+
+.game2-root .game2-hud-sub {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+.game2-root .game2-hud-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.game2-root .game2-score-disp {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.game2-root .game2-instruction {
+  background: var(--surface);
+  border-bottom: 1px solid rgba(26, 85, 227, 0.08);
+  padding: 9px 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.game2-root .game2-instruction-text {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.game2-root .game2-instruction-text b {
+  color: var(--text);
+}
+
+.game2-root .game2-arena {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 14px;
+}
+
+.game2-root .game2-card-stack {
+  position: relative;
+  width: 250px;
+  height: 320px;
+}
+
+.game2-root .game2-site-card {
+  position: absolute;
+  inset: 0;
+  background: var(--surface);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.13);
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.game2-root .game2-site-card:active {
+  cursor: grabbing;
+}
+
+.game2-root .game2-site-card.game2-back {
+  transform: scale(0.94) translateY(10px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.game2-root .game2-site-card.game2-front {
+  z-index: 2;
+}
+
+.game2-root .game2-choice-label {
+  position: absolute;
+  top: 14px;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  opacity: 0;
+  transition: opacity 120ms;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.game2-root .game2-label-real {
+  left: 12px;
+  background: var(--green);
+  color: #1a4a00;
+}
+
+.game2-root .game2-label-fake {
+  right: 12px;
+  background: var(--magenta);
+  color: #fff;
+}
+
+.game2-root .game2-card-browser {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.game2-root .game2-card-bar {
+  background: #f5f5f5;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border-bottom: 1px solid #e8e8e8;
+  flex-shrink: 0;
+}
+
+.game2-root .game2-card-lock {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+}
+
+.game2-root .game2-card-url {
+  flex: 1;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 3px 7px;
+  font-size: 9px;
+  font-family: monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.game2-root .game2-card-url.game2-bad {
+  border-color: var(--magenta);
+  background: #fff5f7;
+  color: #c20048;
+}
+
+.game2-root .game2-card-site {
+  flex: 1;
+  overflow: hidden;
+}
+
+.game2-root .game2-card-site-header {
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--blue);
+}
+
+.game2-root .game2-card-logo {
+  font-size: 12px;
+  font-weight: 900;
+  color: #fff;
+}
+
+.game2-root .game2-card-logo.game2-fake {
+  color: #ffe0e0;
+}
+
+.game2-root .game2-card-nav {
+  display: flex;
+  gap: 6px;
+}
+
+.game2-root .game2-card-nav span {
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.game2-root .game2-card-hero {
+  padding: 10px;
+  background: linear-gradient(135deg, #1a55e3, #2563eb);
+}
+
+.game2-root .game2-card-hero-title {
+  font-size: 11px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 3px;
+}
+
+.game2-root .game2-card-hero-sub {
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 8px;
+}
+
+.game2-root .game2-card-cta {
+  display: inline-block;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.game2-root .game2-card-cta.game2-ok {
+  background: var(--green);
+  color: #1a4a00;
+}
+
+.game2-root .game2-card-cta.game2-bad {
+  background: var(--magenta);
+  color: #fff;
+}
+
+.game2-root .game2-card-body {
+  padding: 8px 10px;
+  background: var(--bg);
+}
+
+.game2-root .game2-card-body-row {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 6px;
+}
+
+.game2-root .game2-card-body-title {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.game2-root .game2-card-body-text {
+  font-size: 8px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.game2-root .game2-card-fake-field {
+  background: var(--surface);
+  border: 1.5px solid var(--magenta);
+  border-radius: 6px;
+  padding: 5px 8px;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.game2-root .game2-card-fake-label {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--magenta);
+}
+
+.game2-root .game2-card-fake-input {
+  font-size: 8px;
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.game2-root .game2-swipe-btns {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 10px 14px 18px;
+  flex-shrink: 0;
+}
+
+.game2-root .game2-btn-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.game2-root .game2-swipe-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition);
+}
+
+.game2-root .game2-swipe-btn:active {
+  transform: scale(0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.game2-root .game2-btn-real {
+  background: var(--green);
+}
+
+.game2-root .game2-btn-fake {
+  background: var(--magenta);
+}
+
+.game2-root .game2-swipe-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.game2-root .game2-result-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms;
+}
+
+.game2-root .game2-result-overlay.game2-show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.game2-root .game2-result-overlay.game2-tone-correct {
+  background: rgba(110, 224, 74, 0.1);
+}
+
+.game2-root .game2-result-overlay.game2-tone-wrong {
+  background: rgba(255, 59, 107, 0.08);
+}
+
+.game2-root .game2-result-panel {
+  background: var(--text);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.game2-root .game2-result-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+.game2-root .game2-result-tag.game2-tag-ok {
+  color: var(--green);
+}
+
+.game2-root .game2-result-tag.game2-tag-bad {
+  color: var(--magenta);
+}
+
+.game2-root .game2-result-title {
+  font-size: 14px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.game2-root .game2-result-body {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.game2-root .game2-result-diff {
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 14px;
+}
+
+.game2-root .game2-result-diff-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+
+.game2-root .game2-result-diff-text {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: monospace;
+  line-height: 1.4;
+}
+
+.game2-root .game2-btn-next {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 13px;
+  font-size: 13px;
+  font-weight: 700;
+  width: 100%;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity var(--transition);
+}
+
+.game2-root .game2-btn-next:active {
+  opacity: 0.85;
+}
+
+.game2-root .game2-end-screen {
+  position: absolute;
+  inset: 0;
+  background: var(--dark);
+  z-index: 40;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  text-align: center;
+}
+
+.game2-root .game2-end-screen.game2-show {
+  display: flex;
+}
+
+.game2-root .game2-end-score {
+  font-size: 56px;
+  font-weight: 900;
+  color: var(--green);
+  letter-spacing: -2px;
+  margin-bottom: 4px;
+}
+
+.game2-root .game2-end-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 24px;
+}
+
+.game2-root .game2-end-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.game2-root .game2-end-sub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+.game2-root .game2-btn-end {
+  background: var(--green);
+  color: #1a4a00;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  width: 100%;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* ══ Этап 3 — «Сапёр» (game3.html), префикс .game3-* ══ */
+.game3-root {
+  width: 100%;
+  min-height: 620px;
+  height: 100%;
+  font-family: "Inter", var(--ds-font-sans, system-ui, sans-serif);
+}
+
+.game3-root .game3-screen {
+  width: 100%;
+  min-height: 620px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.game3-root .game3-hud {
+  background: var(--blue);
+  padding: 16px 18px 13px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.game3-root .game3-hud-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.game3-root .game3-hud-c {
+  position: relative;
+  z-index: 2;
+}
+
+.game3-root .game3-hud-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.game3-root .game3-hud-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #fff;
+}
+
+.game3-root .game3-found-pill {
+  background: rgba(110, 224, 74, 0.2);
+  border: 1px solid rgba(110, 224, 74, 0.4);
+  color: var(--green);
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.game3-root .game3-progress-bar {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  height: 4px;
+  overflow: hidden;
+}
+
+.game3-root .game3-progress-fill {
+  height: 4px;
+  border-radius: 4px;
+  background: var(--green);
+  width: 0%;
+  transition: width 400ms ease;
+}
+
+.game3-root .game3-hud-sub {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+.game3-root .game3-hud-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.game3-root .game3-error-disp {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--magenta);
+}
+
+.game3-root .game3-instruction {
+  background: var(--surface);
+  border-bottom: 1px solid rgba(26, 85, 227, 0.08);
+  padding: 9px 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.game3-root .game3-instruction-text {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.game3-root .game3-instruction-text b {
+  color: var(--text);
+}
+
+.game3-root .game3-desktop {
+  flex: 1;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.game3-root .game3-desktop-bar {
+  background: var(--surface);
+  border-radius: 10px;
+  padding: 7px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.game3-root .game3-desktop-time {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.game3-root .game3-desktop-icons-top {
+  display: flex;
+  gap: 6px;
+}
+
+.game3-root .game3-desktop-icon-sm {
+  width: 18px;
+  height: 18px;
+  border-radius: 5px;
+  background: var(--blue-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+.game3-root .game3-app-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  align-content: start;
+}
+
+.game3-root .game3-app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  position: relative;
+}
+
+.game3-root .game3-app-icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 200ms;
+  border: 2px solid transparent;
+}
+
+.game3-root .game3-app-icon.game3-danger-found {
+  border-color: var(--green);
+  background: #e4fbd9 !important;
+}
+
+.game3-root .game3-app-icon.game3-safe-wrong {
+  animation: game3-shake 0.3s ease;
+}
+
+.game3-root .game3-app-icon.game3-exploded {
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+  transition: all 300ms;
+}
+
+@keyframes game3-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.game3-root .game3-app-name {
+  font-size: 8px;
+  color: var(--text);
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.2;
+  max-width: 58px;
+}
+
+.game3-root .game3-app-check {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  opacity: 0;
+  transition: opacity 200ms;
+}
+
+.game3-root .game3-app-check.game3-show {
+  opacity: 1;
+}
+
+.game3-root .game3-tooltip {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 12px;
+  background: var(--text);
+  border-radius: var(--radius-md);
+  padding: 13px 14px;
+  z-index: 20;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  transform: translateY(6px);
+  opacity: 0;
+  transition: all 220ms ease;
+  pointer-events: none;
+}
+
+.game3-root .game3-tooltip.game3-show {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.game3-root .game3-tooltip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.game3-root .game3-tooltip-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+}
+
+.game3-root .game3-tooltip-tag.game3-tag-ok {
+  color: var(--green);
+}
+
+.game3-root .game3-tooltip-tag.game3-tag-bad {
+  color: var(--magenta);
+}
+
+.game3-root .game3-tooltip-close {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+
+.game3-root .game3-tooltip-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.game3-root .game3-tooltip-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.game3-root .game3-tooltip-body {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.45;
+}
+
+.game3-root .game3-end-screen {
+  position: absolute;
+  inset: 0;
+  background: var(--dark);
+  z-index: 40;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  text-align: center;
+}
+
+.game3-root .game3-end-screen.game3-show {
+  display: flex;
+}
+
+.game3-root .game3-end-score {
+  font-size: 56px;
+  font-weight: 900;
+  color: var(--green);
+  letter-spacing: -2px;
+  margin-bottom: 4px;
+}
+
+.game3-root .game3-end-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 22px;
+}
+
+.game3-root .game3-end-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.game3-root .game3-end-sub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+.game3-root .game3-btn-end {
+  background: var(--green);
+  color: #1a4a00;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  width: 100%;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity var(--transition);
+}
+
+.game3-root .game3-btn-end:active {
+  opacity: 0.85;
+}
+
+/* ══ Этап 4 — «Красная кнопка» (game4.html), префикс .game4-* ══ */
+.game4-root {
+  width: 100%;
+  min-height: 620px;
+  height: 100%;
+  font-family: "Inter", var(--ds-font-sans, system-ui, sans-serif);
+}
+
+.game4-root .game4-screen {
+  width: 100%;
+  min-height: 620px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.game4-root .game4-hud {
+  background: var(--blue);
+  padding: 16px 18px 13px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.game4-root .game4-hud-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.game4-root .game4-hud-c {
+  position: relative;
+  z-index: 2;
+}
+
+.game4-root .game4-hud-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.game4-root .game4-hud-title {
+  font-size: 13px;
+  font-weight: 900;
+  color: #fff;
+}
+
+.game4-root .game4-progress-pill {
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.game4-root .game4-progress-bar {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  height: 4px;
+  overflow: hidden;
+}
+
+.game4-root .game4-progress-fill {
+  height: 4px;
+  border-radius: 4px;
+  background: var(--green);
+  width: 0%;
+  transition: width 400ms ease;
+}
+
+.game4-root .game4-hud-sub {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+.game4-root .game4-hud-label {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.game4-root .game4-score-disp {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.game4-root .game4-feed {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-behavior: smooth;
+}
+
+.game4-root .game4-feed::-webkit-scrollbar {
+  width: 3px;
+}
+
+.game4-root .game4-feed::-webkit-scrollbar-thumb {
+  background: rgba(26, 85, 227, 0.2);
+  border-radius: 2px;
+}
+
+.game4-root .game4-feed-card {
+  background: var(--surface);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1.5px solid transparent;
+  transition:
+    border-color 200ms,
+    transform 200ms;
+  flex-shrink: 0;
+}
+
+.game4-root .game4-feed-card.game4-correct-ok {
+  border-color: var(--green);
+  background: #f6fef2;
+}
+
+.game4-root .game4-feed-card.game4-correct-scam {
+  border-color: var(--magenta);
+  background: #fff5f7;
+}
+
+.game4-root .game4-feed-card.game4-wrong {
+  animation: game4-wrong-shake 0.35s ease;
+}
+
+@keyframes game4-wrong-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.game4-root .game4-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px 6px;
+}
+
+.game4-root .game4-card-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.game4-root .game4-card-sender {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.game4-root .game4-card-time {
+  font-size: 9px;
+  color: #9ca3af;
+  margin-left: auto;
+}
+
+.game4-root .game4-card-badge {
+  font-size: 9px;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 2px 7px;
+  margin-left: 6px;
+}
+
+.game4-root .game4-badge-job {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.game4-root .game4-badge-invest {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.game4-root .game4-badge-prize {
+  background: #f3e8ff;
+  color: #6b21a8;
+}
+
+.game4-root .game4-badge-transfer {
+  background: #ffe4e6;
+  color: #9f1239;
+}
+
+.game4-root .game4-badge-news {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.game4-root .game4-card-body {
+  padding: 0 12px 10px;
+}
+
+.game4-root .game4-card-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+  line-height: 1.3;
+}
+
+.game4-root .game4-card-text {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.game4-root .game4-card-highlight {
+  display: inline-block;
+  background: #fef3c7;
+  color: #92400e;
+  border-radius: 5px;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.game4-root .game4-card-highlight.game4-highlight-scam {
+  background: #ffe4e6;
+  color: #9f1239;
+}
+
+.game4-root .game4-card-actions {
+  display: flex;
+  border-top: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+.game4-root .game4-btn-norm {
+  flex: 1;
+  padding: 13px 8px;
+  background: #16a34a;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--transition);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.game4-root .game4-btn-norm:hover:not(:disabled) {
+  background: #15803d;
+}
+
+.game4-root .game4-btn-norm:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.game4-root .game4-btn-scam {
+  flex: 1;
+  padding: 13px 8px;
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background var(--transition);
+}
+
+.game4-root .game4-btn-scam:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.game4-root .game4-btn-scam:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.game4-root .game4-card-result {
+  display: none;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.game4-root .game4-card-result.game4-show {
+  display: flex;
+}
+
+.game4-root .game4-card-result.game4-right {
+  color: #166534;
+  background: #f0fdf4;
+}
+
+.game4-root .game4-card-result.game4-wrong-r {
+  color: #9f1239;
+  background: #fff5f5;
+}
+
+.game4-root .game4-tooltip {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  background: var(--text);
+  border-radius: var(--radius-md);
+  padding: 13px 14px;
+  z-index: 20;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  transform: translateY(6px);
+  opacity: 0;
+  transition: all 220ms ease;
+  pointer-events: none;
+}
+
+.game4-root .game4-tooltip.game4-show {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.game4-root .game4-tooltip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.game4-root .game4-tooltip-tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+}
+
+.game4-root .game4-tooltip-tag.game4-tag-ok {
+  color: var(--green);
+}
+
+.game4-root .game4-tooltip-tag.game4-tag-bad {
+  color: var(--magenta);
+}
+
+.game4-root .game4-tooltip-close {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  color: #fff;
+  border-radius: 6px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+
+.game4-root .game4-tooltip-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.game4-root .game4-tooltip-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.game4-root .game4-tooltip-body {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.45;
+}
+
+.game4-root .game4-end-screen {
+  position: absolute;
+  inset: 0;
+  background: var(--dark);
+  z-index: 40;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  text-align: center;
+}
+
+.game4-root .game4-end-screen.game4-show {
+  display: flex;
+}
+
+.game4-root .game4-end-score {
+  font-size: 56px;
+  font-weight: 900;
+  color: var(--green);
+  letter-spacing: -2px;
+  margin-bottom: 4px;
+}
+
+.game4-root .game4-end-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 22px;
+}
+
+.game4-root .game4-end-title {
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.game4-root .game4-end-sub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+
+.game4-root .game4-btn-end {
+  background: var(--green);
+  color: #1a4a00;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 700;
+  width: 100%;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity var(--transition);
+}
+
+.game4-root .game4-btn-end:active {
+  opacity: 0.85;
+}

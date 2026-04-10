@@ -1,0 +1,168 @@
+/**
+ * Токены дизайн-системы «Кибер.рыцарь».
+ * Источник описаний и правил: design-system.md (держать в синхроне).
+ */
+:root {
+  /* --- Цвета --- */
+  --ds-color-page-0: #e8eef7;
+  --ds-color-page-1: #f1f5f9;
+  --ds-color-page-2: #e2e8f0;
+  --ds-color-surface: #ffffff;
+  --ds-color-surface-glass: rgb(255 255 255 / 72%);
+  --ds-color-ghost-hover: rgb(15 23 42 / 6%);
+  --ds-color-border-subtle: rgb(15 23 42 / 8%);
+  --ds-color-text: #0f172a;
+  --ds-color-text-secondary: #475569;
+  --ds-color-text-muted: #64748b;
+  --ds-color-accent: #2563eb;
+  --ds-color-accent-hover: #1d4ed8;
+  --ds-color-accent-subtle: rgb(37 99 235 / 10%);
+  --ds-color-on-accent: #ffffff;
+  --ds-color-danger: #dc2626;
+  --ds-color-danger-subtle: rgb(220 38 38 / 10%);
+  --ds-color-success: #16a34a;
+  --ds-color-success-subtle: rgb(22 163 74 / 12%);
+  --ds-color-scrim: rgb(15 23 42 / 45%);
+  --ds-color-knight: #6366f1;
+
+  /* --- Типографика --- */
+  --ds-font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  --ds-font-weight-normal: 400;
+  --ds-font-weight-medium: 500;
+  --ds-font-weight-semibold: 600;
+  --ds-font-weight-bold: 700;
+  --ds-text-eyebrow: 0.75rem;
+  --ds-text-title: 1.75rem;
+  --ds-text-lead: 1rem;
+  --ds-text-body: 0.95rem;
+  --ds-text-caption: 0.8rem;
+  --ds-text-modal-title: 1.25rem;
+  --ds-line-tight: 1.2;
+  --ds-line-normal: 1.5;
+
+  /* --- Отступы (4px сетка) --- */
+  --ds-space-1: 0.25rem;
+  --ds-space-2: 0.5rem;
+  --ds-space-3: 0.75rem;
+  --ds-space-4: 1rem;
+  --ds-space-5: 1.25rem;
+  --ds-space-6: 1.5rem;
+  --ds-space-7: 1.75rem;
+  --ds-space-8: 2rem;
+
+  /* --- Радиусы --- */
+  --ds-radius-sm: 0.375rem;
+  --ds-radius-md: 0.5rem;
+  --ds-radius-lg: 1rem;
+  --ds-radius-pill: 999px;
+
+  /* --- Тени --- */
+  --ds-shadow-md: 0 10px 25px -10px rgb(15 23 42 / 18%);
+  --ds-shadow-lg: 0 25px 50px -12px rgb(15 23 42 / 25%);
+
+  /* --- Макет --- */
+  --ds-screen-max: 28rem;
+  --ds-screen-game-max: 26rem;
+  --ds-modal-max-w: 22rem;
+  --ds-reward-visual-height: 12rem;
+  --ds-tap-min: 44px;
+
+  /* --- Кибер-экраны (reference/screens.html → синхрон с design-system.md) --- */
+  --ds-cyber-dark: #0a0a1e;
+  --ds-cyber-blue: #1a55e3;
+  --ds-cyber-blue-soft: #e5edff;
+  --ds-cyber-green: #6ee04a;
+  --ds-cyber-green-soft: #e4fbd9;
+  --ds-cyber-magenta: #ff3b6b;
+  --ds-cyber-purple: #8b5cf6;
+  --ds-cyber-stage-bg: #f0f4ff;
+  --ds-cyber-text-navy: #0d1b4b;
+  --ds-cyber-text-muted: #6b7280;
+  --ds-cyber-frame: #0d0d1a;
+  --ds-cyber-transition: 220ms ease;
+  --ds-cyber-radius-sm: 8px;
+  --ds-cyber-radius-md: 14px;
+  --ds-cyber-radius-lg: 20px;
+  --ds-cyber-radius-xl: 36px;
+  --ds-cyber-screen-min-h: 620px;
+  --ds-cyber-font: "Inter", var(--ds-font-sans);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--ds-font-sans);
+  line-height: var(--ds-line-normal);
+  font-weight: var(--ds-font-weight-normal);
+  color: var(--ds-color-text);
+  background-color: var(--ds-color-page-1);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+}
+
+#root {
+  min-height: 100dvh;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Утилитарные типографические классы (см. design-system.md) */
+.ds-eyebrow {
+  margin: 0;
+  font-size: var(--ds-text-eyebrow);
+  font-weight: var(--ds-font-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ds-color-text-muted);
+}
+
+.ds-title {
+  margin: 0;
+  font-size: var(--ds-text-title);
+  font-weight: var(--ds-font-weight-bold);
+  line-height: var(--ds-line-tight);
+  color: var(--ds-color-text);
+}
+
+.ds-lead {
+  margin: 0;
+  font-size: var(--ds-text-lead);
+  font-weight: var(--ds-font-weight-normal);
+  line-height: var(--ds-line-normal);
+  color: var(--ds-color-text-secondary);
+}
+
+.ds-body {
+  margin: 0;
+  font-size: var(--ds-text-body);
+  font-weight: var(--ds-font-weight-normal);
+  line-height: var(--ds-line-normal);
+  color: var(--ds-color-text-secondary);
+}
+
+.ds-caption {
+  margin: 0;
+  font-size: var(--ds-text-caption);
+  font-weight: var(--ds-font-weight-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ds-color-text);
+}

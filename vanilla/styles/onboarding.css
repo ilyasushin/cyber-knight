@@ -1,0 +1,165 @@
+/**
+ * Онбординги этапов и иллюстрации наград — из onboarding-rewards.html
+ */
+.ob {
+  background: var(--dark);
+}
+
+.ob-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.ob-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-height: 620px;
+  padding: 52px 26px 28px;
+}
+
+.ob-stage {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(110, 224, 74, 0.7);
+  margin-bottom: 20px;
+}
+
+.ob-illo {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.ob-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.ob-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+
+.ob-text {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.55;
+  margin-bottom: 26px;
+}
+
+.ob-btn {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 17px;
+  font-size: 15px;
+  font-weight: 700;
+  width: 100%;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity var(--transition);
+}
+
+.ob-btn:active {
+  opacity: 0.85;
+}
+
+/* Экран выбора этапа: несколько панелей онбординга */
+.stage-intro-root {
+  position: relative;
+  min-height: 620px;
+  background: var(--dark) !important;
+}
+
+.stage-intro-chrome {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: 14px 20px 0;
+  pointer-events: none;
+}
+
+.stage-intro-chrome .stage-header-row {
+  pointer-events: auto;
+  margin-bottom: 0;
+}
+
+.stage-intro-chrome .stage-badge {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.stage-intro-chrome .stage-dot {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.stage-intro-chrome .stage-dot.active {
+  background: var(--green);
+}
+
+.stage-intro-host {
+  position: relative;
+  z-index: 1;
+  min-height: 620px;
+}
+
+.stage-intro-panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.stage-intro-panel[hidden] {
+  display: none !important;
+}
+
+/* Награды — акценты в заголовках */
+.rw-title .accent-blue {
+  color: var(--blue);
+}
+
+.rw-title .accent-purple {
+  color: var(--purple);
+}
+
+.rw-title .accent-green {
+  color: var(--green);
+}
+
+/* Экран результата: варианты персонажа */
+.knight-wrap {
+  position: relative;
+  min-height: 220px;
+  align-items: center;
+}
+
+.result-knight-variant {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+}
+
+.result-knight-variant[hidden] {
+  display: none !important;
+}
